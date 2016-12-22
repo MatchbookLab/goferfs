@@ -42,7 +42,7 @@ export default class LocalAdapter implements IAdapter {
     }
 
     async rename(oldPath: string, newPath: string): Promise<boolean> {
-        await fs.rename(this.fullPath(oldPath), this.fullPath(newPath));
+        await fs.renameAsync(this.fullPath(oldPath), this.fullPath(newPath));
 
         return true;
     }
