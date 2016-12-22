@@ -42,11 +42,24 @@ export default class LocalAdapter implements IAdapter {
     }
 
     async rename(oldPath: string, newPath: string): Promise<boolean> {
-        throw new Error('rename NYI');
+        await fs.rename(this.fullPath(oldPath), this.fullPath(newPath));
+
+        return true;
     }
 
     async copy(oldPath: string, clonedPath: string): Promise<boolean> {
-        throw new Error('copy NYI');
+        const readableStream = fs.createReadStream(this.fullPath(oldPath));
+        const writeableStream = fs.createWriteStream(this.fullPath(clonedPath));
+
+        // we use streams here to ensure that copy will always work regardless of file size
+        await new Bluebird((resolve, reject) => {
+            readableStream
+                .pipe(writeableStream)
+                .on('error', () => reject(false))
+                .on('finish', () => resolve(true));
+        });
+
+        return true; // this can't be right?!
     }
 
     async delete(path: string): Promise<boolean> {
