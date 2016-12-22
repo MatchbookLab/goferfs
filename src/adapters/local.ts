@@ -1,15 +1,15 @@
-import { Writable } from 'stream';
-import * as nodeFs from 'fs';
-import { resolve, basename, dirname, extname } from 'path';
-import * as mkdirpSync from 'mkdirp';
+/// <reference types="fs-extra-promise" />
 
+import * as Stream from 'stream';
+import * as fs from 'fs-extra-promise';
+import { resolve, basename, dirname, extname } from 'path';
+import { lookup as mimeLookup } from 'mime';
 import * as Bluebird from 'bluebird';
 
 import { IMetadata, IFile, IStreamFile, IAdapter } from '../types';
 import Metadata from '../metadata';
-
-const mkdirp = Bluebird.promisify(mkdirpSync);
-const fs: any = Bluebird.promisifyAll(nodeFs);
+import File from '../file';
+import StreamFile from '../stream-file';
 
 export default class LocalAdapter implements IAdapter {
     private basePath: string;
@@ -26,27 +26,35 @@ export default class LocalAdapter implements IAdapter {
         return this.getMetadata(path);
     }
 
-    async writeStream(path: string, stream: Writable): Promise<IMetadata> {
+    async writeStream(path: string, stream: Stream): Promise<IMetadata> {
         path = this.fullPath(path);
-        throw new Error('writeStream NYI');
-    }
 
-    async update(path: string, contents: string): Promise<IMetadata> {
-        path = this.fullPath(path);
-        throw new Error('update NYI');
-    }
+        stream.pipe(fs.createWriteStream(path));
 
-    async updateStream(path: string, stream: Writable): Promise<IMetadata> {
-        path = this.fullPath(path);
-        throw new Error('updateStream NYI');
+        await new Bluebird((resolve, reject) => {
+            stream.on('end', resolve);
+            stream.on('error', reject);
+        });
+
+        return this.getMetadata(path);
     }
 
     async rename(oldPath: string, newPath: string): Promise<IMetadata> {
-        throw new Error('rename NYI');
+        oldPath = this.fullPath(oldPath);
+        newPath = this.fullPath(newPath);
+
+        await fs.renameAsync(oldPath, newPath);
+
+        return this.getMetadata(newPath);
     }
 
     async copy(oldPath: string, clonedPath: string): Promise<IMetadata> {
-        throw new Error('copy NYI');
+        oldPath = this.fullPath(oldPath);
+        clonedPath = this.fullPath(clonedPath);
+
+        await fs.copyAsync(oldPath, clonedPath);
+
+        return this.getMetadata(clonedPath);
     }
 
     async delete(path: string): Promise<boolean> {
@@ -59,41 +67,51 @@ export default class LocalAdapter implements IAdapter {
 
     async deleteDir(path: string): Promise<boolean> {
         path = this.fullPath(path);
-        throw new Error('deleteDir NYI');
+
+        await fs.removeAsync(path);
+
+        return true;
     }
 
     async createDir(path: string): Promise<IMetadata> {
         path = this.fullPath(path);
 
-        await mkdirp(path);
+        await fs.ensureDirAsync(path);
 
         return this.getMetadata(path);
     }
 
-    async setVisibility(path: string, visibility: string): Promise<boolean> {
+    async setVisibility(path: string, visibility: string): Promise<IMetadata> {
         path = this.fullPath(path);
         throw new Error('setVisibility NYI');
     }
 
     async has(path: string): Promise<boolean> {
         path = this.fullPath(path);
-        // the async version of exists is deprecated...
-        return Promise.resolve(fs.existsSync(path));
+
+        return fs.existsAsync(path);
     }
 
     async read(path: string): Promise<any> {
         path = this.fullPath(path);
 
-        return { contents: await fs.readFileAsync(path, { encoding: 'utf8' }) };
+        const contents = await fs.readFileAsync(path, 'utf8');
+
+        return new File(await this.getMetadata(path), contents);
     }
 
     async readStream(path: string): Promise<IStreamFile> {
         path = this.fullPath(path);
-        throw new Error('readStream NYI');
+
+        return new StreamFile(await this.getMetadata(path), fs.createReadStream(path, { encoding: 'utf8' }));
     }
 
-    async listContents(directory: string, recursive: boolean): Promise<Array<IMetadata>> {
-        throw new Error('listContents NYI');
+    async listContents(directory: string = '', recursive: boolean = false): Promise<Array<IMetadata>> {
+        directory = this.fullPath(directory);
+
+        const paths = await fs.readdirAsync(directory);
+
+        return Bluebird.map(paths, path => this.getMetadata(resolve(directory, path)));
     }
 
     async getMetadata(path: string): Promise<IMetadata> {
@@ -108,25 +126,30 @@ export default class LocalAdapter implements IAdapter {
             parentDir: dirname(path),
             size: stats.size,
             isFile: stats.isFile(),
-            isDir: stats.isDir(),
+            isDir: stats.isDirectory(),
             timestamp: stats.ctime,
-            mimetype: stats.mimetype,
+            mimetype: mimeLookup(path),
         });
     }
 
     async getSize(path: string): Promise<number> {
         path = this.fullPath(path);
-        throw new Error('getSize NYI');
+
+        const { size } = await fs.statAsync(path);
+
+        return size;
     }
 
     async getMimetype(path: string): Promise<string> {
-        path = this.fullPath(path);
-        throw new Error('getMimetype NYI');
+        return mimeLookup(path);
     }
 
     async getTimestamp(path: string): Promise<Date> {
         path = this.fullPath(path);
-        throw new Error('getTimestamp NYI');
+
+        const { ctime } = await fs.statAsync(path);
+
+        return new Date(ctime);
     }
 
     async getVisibility(path: string): Promise<string> {

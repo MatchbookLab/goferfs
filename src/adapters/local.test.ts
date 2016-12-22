@@ -1,6 +1,6 @@
 import { resolve } from 'path';
 
-import testSuite from '../filesystem.test';
+import testSuite from '../suite.test';
 import LocalAdapter from './local';
 
 describe('Local Adapter', () => {

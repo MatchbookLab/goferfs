@@ -1,5 +1,5 @@
 import { basename, resolve, dirname } from 'path';
-import { Writable } from 'stream';
+import * as Stream from 'stream';
 
 import { IMetadata, IFile, IStreamFile, IAdapter } from './types';
 
@@ -13,6 +13,8 @@ export default class Filesystem implements IAdapter {
 
     async put(path: string, contents: string): Promise<IMetadata> {
         path = this.cleanPath(path);
+        await this.ensureDirectory(path);
+
         if (await this.has(path)) {
             return this.update(path, contents);
         }
@@ -20,7 +22,7 @@ export default class Filesystem implements IAdapter {
         return this.write(path, contents);
     }
 
-    async putStream(path: string, stream: Writable): Promise<IMetadata> {
+    async putStream(path: string, stream: Stream): Promise<IMetadata> {
         path = this.cleanPath(path);
         if (await this.has(path)) {
             return this.updateStream(path, stream);
@@ -79,11 +81,17 @@ export default class Filesystem implements IAdapter {
 
     async write(path: string, contents: string): Promise<IMetadata> {
         path = this.cleanPath(path);
+
+        if (await this.has(path)) {
+            throw new Error('Cannot write to a file that already exists. Use [put] or [update]');
+        }
+
         await this.ensureDirectory(path);
+
         return this.adapter.write(path, contents);
     }
 
-    async writeStream(path: string, stream: Writable): Promise<IMetadata> {
+    async writeStream(path: string, stream: Stream): Promise<IMetadata> {
         path = this.cleanPath(path);
         await this.ensureDirectory(path);
         return this.adapter.writeStream(path, stream);
@@ -91,21 +99,33 @@ export default class Filesystem implements IAdapter {
 
     async update(path: string, contents: string): Promise<IMetadata> {
         path = this.cleanPath(path);
+
+        if (!(await this.has(path))) {
+            throw new Error('Cannot update a file that does not exists. Use [put] or [write]');
+        }
+
         await this.ensureDirectory(path);
-        return this.adapter.update(path, contents);
+
+        return this.adapter.write(path, contents);
     }
 
-    async updateStream(path: string, stream: Writable): Promise<IMetadata> {
+    async updateStream(path: string, stream: Stream): Promise<IMetadata> {
         path = this.cleanPath(path);
         await this.ensureDirectory(path);
-        return this.adapter.updateStream(path, stream);
+        return this.adapter.writeStream(path, stream);
     }
 
-    rename(oldPath: string, newPath: string): Promise<boolean> {
+    rename(oldPath: string, newPath: string): Promise<IMetadata> {
+        oldPath = this.cleanPath(oldPath);
+        newPath = this.cleanPath(newPath);
+
         return this.adapter.rename(oldPath, newPath);
     }
 
-    copy(oldPath: string, clonedPath: string): Promise<boolean> {
+    copy(oldPath: string, clonedPath: string): Promise<IMetadata> {
+        oldPath = this.cleanPath(oldPath);
+        clonedPath = this.cleanPath(clonedPath);
+
         return this.adapter.copy(oldPath, clonedPath);
     }
 
@@ -125,7 +145,7 @@ export default class Filesystem implements IAdapter {
         return this.adapter.deleteDir(path);
     }
 
-    async createDir(path: string): Promise<boolean> {
+    async createDir(path: string): Promise<IMetadata> {
         path = this.cleanPath(path);
 
         if (!(await this.has(path))) {
@@ -133,10 +153,10 @@ export default class Filesystem implements IAdapter {
         }
 
         // already exists
-        return false;
+        return null;
     }
 
-    setVisibility(path: string, visibility: string): Promise<boolean> {
+    setVisibility(path: string, visibility: string): Promise<IMetadata> {
         path = this.cleanPath(path);
         return this.adapter.setVisibility(path, visibility);
     }
