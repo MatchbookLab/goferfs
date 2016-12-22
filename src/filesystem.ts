@@ -1,9 +1,9 @@
 import { basename, resolve, dirname } from 'path';
 import * as Stream from 'stream';
 
-import { IMetadata, IFile, IStreamFile, IAdapter } from './types';
+import { IMetadata, IFile, IStreamFile, IFilesystem, IAdapter } from './types';
 
-export default class Filesystem implements IAdapter {
+export default class Filesystem implements IFilesystem {
     private adapter: IAdapter;
 
     constructor (adapter: IAdapter) {

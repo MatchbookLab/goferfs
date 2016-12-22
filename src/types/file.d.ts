@@ -5,4 +5,3 @@ declare interface IFile extends IMetadata {
 }
 
 export default IFile;
-
