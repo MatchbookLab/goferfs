@@ -1,11 +1,12 @@
 import { Writable } from 'stream';
 import * as nodeFs from 'fs';
-import { resolve } from 'path';
+import { resolve, basename, dirname, extname } from 'path';
 import * as mkdirpSync from 'mkdirp';
 
 import * as Bluebird from 'bluebird';
 
 import { IMetadata, IFile, IStreamFile, IAdapter } from '../types';
+import Metadata from '../metadata';
 
 const mkdirp = Bluebird.promisify(mkdirpSync);
 const fs: any = Bluebird.promisifyAll(nodeFs);
@@ -17,12 +18,12 @@ export default class LocalAdapter implements IAdapter {
         this.basePath = opts.basePath;
     }
 
-    async write(path: string, contents: string): Promise<any> {
+    async write(path: string, contents: string): Promise<IMetadata> {
         path = this.fullPath(path);
 
-        fs.writeFileAsync(path, contents);
+        await fs.writeFileAsync(path, contents);
 
-        return {};
+        return this.getMetadata(path);
     }
 
     async writeStream(path: string, stream: Writable): Promise<IMetadata> {
@@ -40,11 +41,11 @@ export default class LocalAdapter implements IAdapter {
         throw new Error('updateStream NYI');
     }
 
-    async rename(oldPath: string, newPath: string): Promise<boolean> {
+    async rename(oldPath: string, newPath: string): Promise<IMetadata> {
         throw new Error('rename NYI');
     }
 
-    async copy(oldPath: string, clonedPath: string): Promise<boolean> {
+    async copy(oldPath: string, clonedPath: string): Promise<IMetadata> {
         throw new Error('copy NYI');
     }
 
@@ -61,12 +62,12 @@ export default class LocalAdapter implements IAdapter {
         throw new Error('deleteDir NYI');
     }
 
-    async createDir(path: string): Promise<any> {
+    async createDir(path: string): Promise<IMetadata> {
         path = this.fullPath(path);
 
         await mkdirp(path);
 
-        return true;
+        return this.getMetadata(path);
     }
 
     async setVisibility(path: string, visibility: string): Promise<boolean> {
@@ -97,7 +98,20 @@ export default class LocalAdapter implements IAdapter {
 
     async getMetadata(path: string): Promise<IMetadata> {
         path = this.fullPath(path);
-        throw new Error('getMetadata NYI');
+
+        const stats = await fs.statAsync(path);
+
+        return new Metadata({
+            path,
+            name: basename(path),
+            ext: extname(path),
+            parentDir: dirname(path),
+            size: stats.size,
+            isFile: stats.isFile(),
+            isDir: stats.isDir(),
+            timestamp: stats.ctime,
+            mimetype: stats.mimetype,
+        });
     }
 
     async getSize(path: string): Promise<number> {

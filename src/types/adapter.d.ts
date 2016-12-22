@@ -27,12 +27,12 @@ declare interface IAdapter extends IReadOnly {
     /**
      * Rename a file.
      */
-    rename(oldPath: string, newPath: string): Promise<boolean>;
+    rename(oldPath: string, newPath: string): Promise<IMetadata>;
 
     /**
      * Copy a file.
      */
-    copy(oldPath: string, clonedPath: string): Promise<boolean>;
+    copy(oldPath: string, clonedPath: string): Promise<IMetadata>;
 
     /**
      * Delete a file.
@@ -47,12 +47,12 @@ declare interface IAdapter extends IReadOnly {
     /**
      * Create a directory.
      */
-    createDir(path: string): Promise<boolean>;
+    createDir(path: string): Promise<IMetadata>;
 
     /**
      * Set the visibility for a file.
      */
-    setVisibility(path: string, visibility: string): Promise<boolean>;
+    setVisibility(path: string, visibility: string): Promise<IMetadata>;
 }
 
 export default IAdapter;
