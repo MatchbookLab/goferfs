@@ -1,0 +1,34 @@
+{
+  "name": "filesystem",
+  "version": "0.0.0",
+  "description": "Filesystem abstraction library",
+  "main": "index.js",
+  "scripts": {
+    "build": "rimraf build && tsc",
+    "test": "mocha --require ts-node/register src/**/*.test.ts"
+  },
+  "repository": {
+    "url": "http://github.com/CWSpear/filesystem",
+    "type": "git"
+  },
+  "author": "CWSpear <cam@cameronspear.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/bluebird": "^3.0.36",
+    "@types/chai": "^3.4.34",
+    "@types/chai-as-promised": "^0.0.29",
+    "@types/mkdirp": "^0.3.29",
+    "@types/mocha": "^2.2.34",
+    "@types/node": "^6.0.52",
+    "chai": "^3.5.0",
+    "chai-as-promised": "^6.0.0",
+    "mocha": "^3.2.0",
+    "rimraf": "^2.5.4",
+    "ts-node": "^1.7.2",
+    "typescript": "^2.1.4"
+  },
+  "dependencies": {
+    "bluebird": "^3.4.6",
+    "mkdirp": "^0.5.1"
+  }
+}
