@@ -86,7 +86,7 @@ We want to make it so you can cache files, so if you are using cloud storage, yo
 
 We want to have it so you can easily use multiple adapters:
 
-```
+```js
 const filesystem = new FilesystemManagter({
   s3: s3Adapter, // Amazon S3
   gcs: gcsAdapter, // Google Cloud Storage
