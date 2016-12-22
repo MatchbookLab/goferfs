@@ -14,7 +14,6 @@ export default class LocalAdapter implements IAdapter {
     private basePath: string;
 
     constructor(opts: { basePath: string }) {
-        console.log('testnanana', opts);
         this.basePath = opts.basePath;
     }
 
@@ -77,6 +76,7 @@ export default class LocalAdapter implements IAdapter {
 
     async has(path: string): Promise<boolean> {
         path = this.fullPath(path);
+        // the async version of exists is deprecated...
         return Promise.resolve(fs.existsSync(path));
     }
 
