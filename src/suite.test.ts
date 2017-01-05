@@ -11,9 +11,9 @@ export default function(adapter: IAdapter) {
 
     describe('The Basics', function () {
         it('should write and read', async() => {
-            await filesystem.put('test.txt', 'Hello, friend!');
+            await filesystem.write('test.txt', 'Hello, friend!');
 
-            (await filesystem.has('test.txt')).should.equal(true);
+            (await filesystem.exists('test.txt')).should.equal(true);
 
             const { contents } = await filesystem.read('test.txt');
             contents.should.equal('Hello, friend!');
@@ -22,19 +22,19 @@ export default function(adapter: IAdapter) {
         it('should delete', async() => {
             await filesystem.delete('test.txt');
 
-            (await filesystem.has('test.txt')).should.equal(false);
+            (await filesystem.exists('test.txt')).should.equal(false);
         });
 
         it('should create path to file', async () => {
-            await filesystem.put('path/to/test.txt', 'Test');
+            await filesystem.write('path/to/test.txt', 'Test');
 
-            (await filesystem.has('path/to/test.txt')).should.equal(true);
+            (await filesystem.exists('path/to/test.txt')).should.equal(true);
         });
 
         it('should delete a directory', async () => {
             await filesystem.deleteDir('path');
 
-            (await filesystem.has('path/to/test.txt')).should.equal(false);
+            (await filesystem.exists('path/to/test.txt')).should.equal(false);
         });
     });
 
@@ -42,30 +42,30 @@ export default function(adapter: IAdapter) {
         afterEach(async () => {
             await filesystem.deleteDir('/');
 
-            (await filesystem.has('path')).should.equal(false);
+            (await filesystem.exists('path')).should.equal(false);
         });
 
         it('should rename', async () => {
-            await filesystem.put('path/to/test1.txt', 'Test');
-            await filesystem.rename('path/to/test1.txt', 'path/to/test2.txt');
+            await filesystem.write('path/to/test1.txt', 'Test');
+            await filesystem.move('path/to/test1.txt', 'path/to/test2.txt');
 
-            (await filesystem.has('path/to/test1.txt')).should.equal(false);
-            (await filesystem.has('path/to/test2.txt')).should.equal(true);
+            (await filesystem.exists('path/to/test1.txt')).should.equal(false);
+            (await filesystem.exists('path/to/test2.txt')).should.equal(true);
             (await filesystem.read('path/to/test2.txt')).contents.should.equal('Test');
         });
 
         it('should copy', async () => {
-            await filesystem.put('path/to/test1.txt', 'Test');
+            await filesystem.write('path/to/test1.txt', 'Test');
             await filesystem.copy('path/to/test1.txt', 'path/to/test2.txt');
 
-            (await filesystem.has('path/to/test1.txt')).should.equal(true);
-            (await filesystem.has('path/to/test2.txt')).should.equal(true);
+            (await filesystem.exists('path/to/test1.txt')).should.equal(true);
+            (await filesystem.exists('path/to/test2.txt')).should.equal(true);
             (await filesystem.read('path/to/test1.txt')).contents.should.equal('Test');
             (await filesystem.read('path/to/test2.txt')).contents.should.equal('Test');
         });
 
         it('should get directory list', async () => {
-            await filesystem.put('path/to/test1.txt', 'Test');
+            await filesystem.write('path/to/test1.txt', 'Test');
             await filesystem.copy('path/to/test1.txt', 'path/to/test2.txt');
             await filesystem.createDir('path/to/dir');
 
@@ -75,7 +75,7 @@ export default function(adapter: IAdapter) {
         });
 
         it('should return full metadata', async () => {
-            await filesystem.put('path/to/test1.txt', 'Test');
+            await filesystem.write('path/to/test1.txt', 'Test');
             const file = await filesystem.read('path/to/test1.txt');
 
             file.contents.should.equal('Test');

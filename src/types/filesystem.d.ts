@@ -6,12 +6,12 @@ declare interface IFilesystem extends IAdapter {
     /**
      * Write a new file.
      */
-    put(path: string, contents: string): Promise<IMetadata>;
+    write(path: string, contents: string): Promise<IMetadata>;
 
     /**
      * Write a new file using a stream.
      */
-    putStream(path: string, stream: Stream): Promise<IMetadata>;
+    writeStream(path: string, stream: Stream): Promise<IMetadata>;
 
     /**
      * Write a new file.

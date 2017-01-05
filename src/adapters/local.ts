@@ -18,7 +18,7 @@ export default class LocalAdapter implements IAdapter {
         this.basePath = opts.basePath;
     }
 
-    async write(path: string, contents: string): Promise<IMetadata> {
+    async create(path: string, contents: string): Promise<IMetadata> {
         path = this.fullPath(path);
 
         await fs.writeFileAsync(path, contents);
@@ -26,7 +26,7 @@ export default class LocalAdapter implements IAdapter {
         return this.getMetadata(path);
     }
 
-    async writeStream(path: string, stream: Stream): Promise<IMetadata> {
+    async createStream(path: string, stream: Stream): Promise<IMetadata> {
         path = this.fullPath(path);
 
         stream.pipe(fs.createWriteStream(path));
@@ -39,7 +39,7 @@ export default class LocalAdapter implements IAdapter {
         return this.getMetadata(path);
     }
 
-    async rename(oldPath: string, newPath: string): Promise<IMetadata> {
+    async move(oldPath: string, newPath: string): Promise<IMetadata> {
         oldPath = this.fullPath(oldPath);
         newPath = this.fullPath(newPath);
 
@@ -86,7 +86,7 @@ export default class LocalAdapter implements IAdapter {
         throw new Error('setVisibility NYI');
     }
 
-    async has(path: string): Promise<boolean> {
+    async exists(path: string): Promise<boolean> {
         path = this.fullPath(path);
 
         return fs.existsAsync(path);

@@ -6,7 +6,7 @@ declare interface IReadOnly {
     /**
      * Check whether a file exists.
      */
-    has(path: string): Promise<boolean>;
+    exists(path: string): Promise<boolean>;
 
     /**
      * Read a file.

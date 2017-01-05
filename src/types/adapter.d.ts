@@ -7,17 +7,17 @@ declare interface IAdapter extends IReadOnly {
     /**
      * Write a new file.
      */
-    write(path: string, contents: string): Promise<IMetadata>;
+    create(path: string, contents: string): Promise<IMetadata>;
 
     /**
      * Write a new file using a stream.
      */
-    writeStream(path: string, stream: Stream): Promise<IMetadata>;
+    createStream(path: string, stream: Stream): Promise<IMetadata>;
 
     /**
      * Rename a file.
      */
-    rename(oldPath: string, newPath: string): Promise<IMetadata>;
+    move(oldPath: string, newPath: string): Promise<IMetadata>;
 
     /**
      * Copy a file.
