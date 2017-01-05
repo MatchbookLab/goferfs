@@ -6,30 +6,45 @@ import { resolve, basename, dirname, extname, relative } from 'path';
 import { lookup as mimeLookup } from 'mime';
 import * as Bluebird from 'bluebird';
 
-import { IMetadata, IFile, IStreamFile, IAdapter } from '../types';
+import { IMetadata, IStreamFile, IAdapter } from '../types';
+import Visibility from '../types/visibility';
 import Metadata from '../metadata';
 import File from '../file';
 import StreamFile from '../stream-file';
 
 export default class LocalAdapter implements IAdapter {
     private rootPath: string;
+    private publicVisibilityMode: number;
+    private privateVisibilityMode: number;
 
-    constructor(opts: { rootPath: string }) {
-        this.rootPath = opts.rootPath;
+    constructor({
+        rootPath,
+        publicVisibilityMode = 0o644, // 100644 on Linux
+        privateVisibilityMode = 0o600, // 100600 on Linux
+    }: {
+        rootPath: string,
+        publicVisibilityMode?: number,
+        privateVisibilityMode?: number,
+    }) {
+        this.rootPath = rootPath;
+        this.publicVisibilityMode = publicVisibilityMode;
+        this.privateVisibilityMode = privateVisibilityMode;
     }
 
-    async write(path: string, contents: string): Promise<IMetadata> {
+    async write(path: string, contents: string, { visibility }: { visibility: Visibility } = { visibility: Visibility.Public }): Promise<IMetadata> {
         path = this.fullPath(path);
 
-        await fs.writeFileAsync(path, contents);
+        // @TODO broken type here (mode isn't accepted)
+        const writeFileAsync: any = fs.writeFileAsync;
+        await writeFileAsync(path, contents, { mode: this.getMode(visibility) });
 
         return this.getMetadata(path);
     }
 
-    async writeStream(path: string, stream: Stream): Promise<IMetadata> {
+    async writeStream(path: string, stream: Stream, { visibility }: { visibility: Visibility } = { visibility: Visibility.Public }): Promise<IMetadata> {
         path = this.fullPath(path);
 
-        stream.pipe(fs.createWriteStream(path));
+        stream.pipe(fs.createWriteStream(path, { mode: this.getMode(visibility) }));
 
         await new Bluebird((resolve, reject) => {
             stream.on('end', resolve);
@@ -81,9 +96,18 @@ export default class LocalAdapter implements IAdapter {
         return this.getMetadata(path);
     }
 
-    async setVisibility(path: string, visibility: string): Promise<IMetadata> {
+    async setVisibility(path: string, visibility: Visibility): Promise<IMetadata> {
         path = this.fullPath(path);
-        throw new Error('setVisibility NYI');
+
+        await fs.chmodAsync(path, this.getMode(visibility));
+
+        return this.getMetadata(path);
+    }
+
+    async getVisibility(path: string): Promise<Visibility> {
+        path = this.fullPath(path);
+
+        return (await this.getMetadata(path)).visibility;
     }
 
     async exists(path: string): Promise<boolean> {
@@ -106,14 +130,6 @@ export default class LocalAdapter implements IAdapter {
         return new StreamFile(await this.getMetadata(path), fs.createReadStream(path, { encoding: 'utf8' }));
     }
 
-    async listContents(directory: string = '', recursive: boolean = false): Promise<Array<IMetadata>> {
-        directory = this.fullPath(directory);
-
-        const paths = await fs.readdirAsync(directory);
-
-        return Bluebird.map(paths, path => this.getMetadata(resolve(directory, path)));
-    }
-
     async getMetadata(path: string): Promise<IMetadata> {
         path = this.fullPath(path);
 
@@ -128,33 +144,9 @@ export default class LocalAdapter implements IAdapter {
             isFile: stats.isFile(),
             isDir: stats.isDirectory(),
             timestamp: stats.ctime,
+            visibility: this.parseVisibility(stats.mode),
             mimetype: mimeLookup(path),
         });
-    }
-
-    async getSize(path: string): Promise<number> {
-        path = this.fullPath(path);
-
-        const { size } = await fs.statAsync(path);
-
-        return size;
-    }
-
-    async getMimetype(path: string): Promise<string> {
-        return mimeLookup(path);
-    }
-
-    async getTimestamp(path: string): Promise<Date> {
-        path = this.fullPath(path);
-
-        const { ctime } = await fs.statAsync(path);
-
-        return new Date(ctime);
-    }
-
-    async getVisibility(path: string): Promise<string> {
-        path = this.fullPath(path);
-        throw new Error('getVisibility NYI');
     }
 
     private fullPath(path: string): string {
@@ -163,5 +155,34 @@ export default class LocalAdapter implements IAdapter {
 
     private relativePath(path: string): string {
         return relative(this.rootPath, path);
+    }
+
+    private getMode(visibility: Visibility) {
+        if (visibility === Visibility.Private) {
+            return this.privateVisibilityMode;
+        }
+
+        if (visibility === Visibility.Public) {
+            return this.publicVisibilityMode;
+        }
+
+        throw new Error(`Unsupported Visibility: ${visibility}`);
+    }
+
+    private parseVisibility(mode: number) {
+        // for now, we only support regular files
+        // (this removes the regular file flag from the mode)
+        // i.e. 0o100644 was passed in, and this returns 0o644
+        mode = mode ^ fs.constants.S_IFREG;
+
+        if (mode === this.publicVisibilityMode) {
+            return Visibility.Public;
+        }
+
+        if (mode === this.privateVisibilityMode) {
+            return Visibility.Private;
+        }
+
+        return null;
     }
 }

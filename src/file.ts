@@ -1,4 +1,4 @@
-import { IFile, IMetadata } from './types';
+import { IFile, IMetadata, Visibility } from './types';
 
 export default class File implements IFile {
     contents: string;
@@ -6,6 +6,7 @@ export default class File implements IFile {
     ext: string;
     path: string;
     parentDir: string;
+    visibility: Visibility;
     size: number;
     isFile: boolean;
     isDir: boolean;
@@ -19,6 +20,7 @@ export default class File implements IFile {
         this.ext = metadata.ext;
         this.path = metadata.path;
         this.parentDir = metadata.parentDir;
+        this.visibility = metadata.visibility;
         this.size = metadata.size;
         this.isFile = metadata.isFile;
         this.isDir = metadata.isDir;
