@@ -12,25 +12,19 @@ export default class Filesystem implements IFilesystem {
 
     async write(path: string, contents: string): Promise<IMetadata> {
         path = this.cleanPath(path);
+
         await this.ensureDirectory(path);
 
-        if (await this.exists(path)) {
-            return this.update(path, contents);
-        }
-
-        return this.create(path, contents);
+        return this.adapter.write(path, contents);
     }
 
     async writeStream(path: string, stream: Stream): Promise<IMetadata> {
         path = this.cleanPath(path);
-        if (await this.exists(path)) {
-            return this.updateStream(path, stream);
-        }
 
-        return this.createStream(path, stream);
+        await this.ensureDirectory(path);
+
+        return this.adapter.writeStream(path, stream);
     }
-
-
 
     exists(path: string): Promise<boolean> {
         path = this.cleanPath(path);
@@ -74,44 +68,6 @@ export default class Filesystem implements IFilesystem {
     getVisibility(path: string): Promise<string> {
         path = this.cleanPath(path);
         return this.adapter.getVisibility(path);
-    }
-
-
-
-    async create(path: string, contents: string): Promise<IMetadata> {
-        path = this.cleanPath(path);
-
-        if (await this.exists(path)) {
-            throw new Error('Cannot write to a file that already exists. Use [put] or [update]');
-        }
-
-        await this.ensureDirectory(path);
-
-        return this.adapter.create(path, contents);
-    }
-
-    async createStream(path: string, stream: Stream): Promise<IMetadata> {
-        path = this.cleanPath(path);
-        await this.ensureDirectory(path);
-        return this.adapter.createStream(path, stream);
-    }
-
-    async update(path: string, contents: string): Promise<IMetadata> {
-        path = this.cleanPath(path);
-
-        if (!(await this.exists(path))) {
-            throw new Error('Cannot update a file that does not exists. Use [put] or [write]');
-        }
-
-        await this.ensureDirectory(path);
-
-        return this.adapter.create(path, contents);
-    }
-
-    async updateStream(path: string, stream: Stream): Promise<IMetadata> {
-        path = this.cleanPath(path);
-        await this.ensureDirectory(path);
-        return this.adapter.createStream(path, stream);
     }
 
     move(oldPath: string, newPath: string): Promise<IMetadata> {
@@ -159,6 +115,56 @@ export default class Filesystem implements IFilesystem {
         path = this.cleanPath(path);
         return this.adapter.setVisibility(path, visibility);
     }
+
+
+    async create(path: string, contents: string): Promise<IMetadata> {
+        path = this.cleanPath(path);
+
+        if (await this.exists(path)) {
+            throw new Error('Cannot create a file that already exists. Use [create] or [update]');
+        }
+
+        await this.ensureDirectory(path);
+
+        return this.adapter.write(path, contents);
+    }
+
+    async createStream(path: string, stream: Stream): Promise<IMetadata> {
+        path = this.cleanPath(path);
+
+        if (await this.exists(path)) {
+            throw new Error('Cannot create a file that already exists. Use [create] or [update]');
+        }
+
+        await this.ensureDirectory(path);
+
+        return this.adapter.writeStream(path, stream);
+    }
+
+    async update(path: string, contents: string): Promise<IMetadata> {
+        path = this.cleanPath(path);
+
+        if (!(await this.exists(path))) {
+            throw new Error('Cannot update a file that does not exists. Use [create] or [write]');
+        }
+
+        await this.ensureDirectory(path);
+
+        return this.adapter.write(path, contents);
+    }
+
+    async updateStream(path: string, stream: Stream): Promise<IMetadata> {
+        path = this.cleanPath(path);
+
+        if (!(await this.exists(path))) {
+            throw new Error('Cannot update a file that does not exists. Use [create] or [write]');
+        }
+
+        await this.ensureDirectory(path);
+
+        return this.adapter.writeStream(path, stream);
+    }
+
 
     private ensureDirectory(path: string) {
         path = this.cleanPath(path);
