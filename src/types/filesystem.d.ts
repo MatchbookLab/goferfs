@@ -4,22 +4,22 @@ import * as Stream from 'stream';
 
 declare interface IFilesystem extends IAdapter {
     /**
-     * Write a new file.
+     * Create a new file.
      */
-    write(path: string, contents: string): Promise<IMetadata>;
+    create(path: string, contents: string): Promise<IMetadata>;
 
     /**
-     * Write a new file using a stream.
+     * Create a new file using a stream.
      */
-    writeStream(path: string, stream: Stream): Promise<IMetadata>;
+    createStream(path: string, stream: Stream): Promise<IMetadata>;
 
     /**
-     * Write a new file.
+     * Update an existing file.
      */
     update(path: string, contents: string): Promise<IMetadata>;
 
     /**
-     * Write a new file using a stream.
+     * Update an existing file using a stream.
      */
     updateStream(path: string, stream: Stream): Promise<IMetadata>;
 }

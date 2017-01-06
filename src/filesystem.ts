@@ -1,36 +1,54 @@
-import { basename, resolve, dirname } from 'path';
+import { dirname } from 'path';
 import * as Stream from 'stream';
 
-import { IMetadata, IFile, IStreamFile, IFilesystem, IAdapter } from './types';
+import { IMetadata, IFile, IStreamFile, IFilesystem, IReader, IWriter} from './types';
+
+const typeSymbols = {
+    reader: Symbol('IReader'),
+    writer: Symbol('IWriter')
+}
 
 export default class Filesystem implements IFilesystem {
-    private adapter: IAdapter;
+    private adapter: IReader|IWriter;
 
-    constructor (adapter: IAdapter) {
+    constructor (adapter: IReader|IWriter) {
         this.adapter = adapter;
     }
 
-    async write(path: string, contents: string): Promise<IMetadata> {
-        path = this.cleanPath(path);
-        await this.ensureDirectory(path);
+    private checkType(type: Symbol) {
+        let implementsInterface: boolean;
 
-        if (await this.exists(path)) {
-            return this.update(path, contents);
+        switch(type) {
+            case typeSymbols.reader:
+                implementsInterface = ('read' in (this.adapter as IReader));
+                break;
+            case typeSymbols.writer:
+                implementsInterface = ('write' in (this.adapter as IWriter));
+                break;
         }
 
-        return this.create(path, contents);
+        if(!implementsInterface) {
+            throw new Error(`Adapter must implement interface of type ${ type === typeSymbols.reader ? 'IReader' : 'IWriter' }`);
+        }
+    }
+
+    async write(path: string, contents: string): Promise<IMetadata> {
+        this.checkType(typeSymbols.writer);
+        path = this.cleanPath(path);
+
+        await this.ensureDirectory(path);
+
+        return (this.adapter as IWriter).write(path, contents);
     }
 
     async writeStream(path: string, stream: Stream): Promise<IMetadata> {
+        this.checkType(typeSymbols.writer);
         path = this.cleanPath(path);
-        if (await this.exists(path)) {
-            return this.updateStream(path, stream);
-        }
 
-        return this.createStream(path, stream);
+        await this.ensureDirectory(path);
+
+        return (this.adapter as IWriter).writeStream(path, stream);
     }
-
-
 
     exists(path: string): Promise<boolean> {
         path = this.cleanPath(path);
@@ -38,97 +56,70 @@ export default class Filesystem implements IFilesystem {
     }
 
     read(path: string): Promise<IFile> {
+        this.checkType(typeSymbols.reader);
         path = this.cleanPath(path);
-        return this.adapter.read(path);
+        return (this.adapter as IReader).read(path);
     }
 
     readStream(path: string): Promise<IStreamFile> {
+        this.checkType(typeSymbols.reader);
         path = this.cleanPath(path);
-        return this.adapter.readStream(path);
+        return (this.adapter as IReader).readStream(path);
     }
 
     listContents(directory: string = '', recursive: boolean = false): Promise<Array<IMetadata>> {
-        return this.adapter.listContents(directory, recursive);
+        this.checkType(typeSymbols.reader);
+        return (this.adapter as IReader).listContents(directory, recursive);
     }
 
     getMetadata(path: string): Promise<IMetadata> {
+        this.checkType(typeSymbols.reader);
         path = this.cleanPath(path);
-        return this.adapter.getMetadata(path);
+        return (this.adapter as IReader).getMetadata(path);
     }
 
     getSize(path: string): Promise<number> {
+        this.checkType(typeSymbols.reader);
         path = this.cleanPath(path);
-        return this.adapter.getSize(path);
+        return (this.adapter as IReader).getSize(path);
     }
 
     getMimetype(path: string): Promise<string> {
+        this.checkType(typeSymbols.reader);
         path = this.cleanPath(path);
-        return this.adapter.getMimetype(path);
+        return (this.adapter as IReader).getMimetype(path);
     }
 
     getTimestamp(path: string): Promise<Date> {
+        this.checkType(typeSymbols.reader);
         path = this.cleanPath(path);
-        return this.adapter.getTimestamp(path);
+        return (this.adapter as IReader).getTimestamp(path);
     }
 
     getVisibility(path: string): Promise<string> {
+        this.checkType(typeSymbols.reader);
         path = this.cleanPath(path);
-        return this.adapter.getVisibility(path);
-    }
-
-
-
-    async create(path: string, contents: string): Promise<IMetadata> {
-        path = this.cleanPath(path);
-
-        if (await this.exists(path)) {
-            throw new Error('Cannot write to a file that already exists. Use [put] or [update]');
-        }
-
-        await this.ensureDirectory(path);
-
-        return this.adapter.create(path, contents);
-    }
-
-    async createStream(path: string, stream: Stream): Promise<IMetadata> {
-        path = this.cleanPath(path);
-        await this.ensureDirectory(path);
-        return this.adapter.createStream(path, stream);
-    }
-
-    async update(path: string, contents: string): Promise<IMetadata> {
-        path = this.cleanPath(path);
-
-        if (!(await this.exists(path))) {
-            throw new Error('Cannot update a file that does not exists. Use [put] or [write]');
-        }
-
-        await this.ensureDirectory(path);
-
-        return this.adapter.create(path, contents);
-    }
-
-    async updateStream(path: string, stream: Stream): Promise<IMetadata> {
-        path = this.cleanPath(path);
-        await this.ensureDirectory(path);
-        return this.adapter.createStream(path, stream);
+        return (this.adapter as IReader).getVisibility(path);
     }
 
     move(oldPath: string, newPath: string): Promise<IMetadata> {
+        this.checkType(typeSymbols.writer);
         oldPath = this.cleanPath(oldPath);
         newPath = this.cleanPath(newPath);
 
-        return this.adapter.move(oldPath, newPath);
+        return (this.adapter as IWriter).move(oldPath, newPath);
     }
 
     copy(oldPath: string, clonedPath: string): Promise<IMetadata> {
+        this.checkType(typeSymbols.writer);
         oldPath = this.cleanPath(oldPath);
         clonedPath = this.cleanPath(clonedPath);
 
-        return this.adapter.copy(oldPath, clonedPath);
+        return (this.adapter as IWriter).copy(oldPath, clonedPath);
     }
 
     async delete(path: string): Promise<boolean> {
+        this.checkType(typeSymbols.writer);
         path = this.cleanPath(path);
 
         if (!(await this.exists(path))) {
@@ -136,19 +127,21 @@ export default class Filesystem implements IFilesystem {
             return false;
         }
 
-        return this.adapter.delete(path);
+        return (this.adapter as IWriter).delete(path);
     }
 
     deleteDir(path: string): Promise<boolean> {
+        this.checkType(typeSymbols.writer);
         path = this.cleanPath(path);
-        return this.adapter.deleteDir(path);
+        return (this.adapter as IWriter).deleteDir(path);
     }
 
     async createDir(path: string): Promise<IMetadata> {
+        this.checkType(typeSymbols.writer);
         path = this.cleanPath(path);
 
         if (!(await this.exists(path))) {
-            return this.adapter.createDir(path);
+            return (this.adapter as IWriter).createDir(path);
         }
 
         // already exists
@@ -156,9 +149,64 @@ export default class Filesystem implements IFilesystem {
     }
 
     setVisibility(path: string, visibility: string): Promise<IMetadata> {
+        this.checkType(typeSymbols.reader);
         path = this.cleanPath(path);
-        return this.adapter.setVisibility(path, visibility);
+        return (this.adapter as IWriter).setVisibility(path, visibility);
     }
+
+
+    async create(path: string, contents: string): Promise<IMetadata> {
+        this.checkType(typeSymbols.writer);
+        path = this.cleanPath(path);
+
+        if (await this.exists(path)) {
+            throw new Error('Cannot create a file that already exists. Use [create] or [update]');
+        }
+
+        await this.ensureDirectory(path);
+
+        return (this.adapter as IWriter).write(path, contents);
+    }
+
+    async createStream(path: string, stream: Stream): Promise<IMetadata> {
+        this.checkType(typeSymbols.writer);
+        path = this.cleanPath(path);
+
+        if (await this.exists(path)) {
+            throw new Error('Cannot create a file that already exists. Use [create] or [update]');
+        }
+
+        await this.ensureDirectory(path);
+
+        return (this.adapter as IWriter).writeStream(path, stream);
+    }
+
+    async update(path: string, contents: string): Promise<IMetadata> {
+        this.checkType(typeSymbols.writer);
+        path = this.cleanPath(path);
+
+        if (!(await this.exists(path))) {
+            throw new Error('Cannot update a file that does not exists. Use [create] or [write]');
+        }
+
+        await this.ensureDirectory(path);
+
+        return (this.adapter as IWriter).write(path, contents);
+    }
+
+    async updateStream(path: string, stream: Stream): Promise<IMetadata> {
+        this.checkType(typeSymbols.writer);
+        path = this.cleanPath(path);
+
+        if (!(await this.exists(path))) {
+            throw new Error('Cannot update a file that does not exists. Use [create] or [write]');
+        }
+
+        await this.ensureDirectory(path);
+
+        return (this.adapter as IWriter).writeStream(path, stream);
+    }
+
 
     private ensureDirectory(path: string) {
         path = this.cleanPath(path);

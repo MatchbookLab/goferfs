@@ -1,13 +1,9 @@
 import IMetadata from './metadata';
 import IFile from './file';
 import IStreamFile from './stream-file';
+import {IAdapter} from "./";
 
-declare interface IReadOnly {
-    /**
-     * Check whether a file exists.
-     */
-    exists(path: string): Promise<boolean>;
-
+declare interface IReader extends IAdapter {
     /**
      * Read a file.
      */
@@ -49,4 +45,4 @@ declare interface IReadOnly {
     getVisibility(path: string): Promise<string>;
 }
 
-export default IReadOnly;
+export default IReader;

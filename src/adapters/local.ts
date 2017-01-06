@@ -2,23 +2,23 @@
 
 import * as Stream from 'stream';
 import * as fs from 'fs-extra-promise';
-import { resolve, basename, dirname, extname } from 'path';
+import { resolve, basename, dirname, extname, relative } from 'path';
 import { lookup as mimeLookup } from 'mime';
 import * as Bluebird from 'bluebird';
 
-import { IMetadata, IFile, IStreamFile, IAdapter } from '../types';
+import { IMetadata, IStreamFile, IReader, IWriter } from '../types';
 import Metadata from '../metadata';
 import File from '../file';
 import StreamFile from '../stream-file';
 
-export default class LocalAdapter implements IAdapter {
-    private basePath: string;
+export default class LocalAdapter implements IReader, IWriter {
+    private rootPath: string;
 
-    constructor(opts: { basePath: string }) {
-        this.basePath = opts.basePath;
+    constructor(opts: { rootPath: string }) {
+        this.rootPath = opts.rootPath;
     }
 
-    async create(path: string, contents: string): Promise<IMetadata> {
+    async write(path: string, contents: string): Promise<IMetadata> {
         path = this.fullPath(path);
 
         await fs.writeFileAsync(path, contents);
@@ -26,7 +26,7 @@ export default class LocalAdapter implements IAdapter {
         return this.getMetadata(path);
     }
 
-    async createStream(path: string, stream: Stream): Promise<IMetadata> {
+    async writeStream(path: string, stream: Stream): Promise<IMetadata> {
         path = this.fullPath(path);
 
         stream.pipe(fs.createWriteStream(path));
@@ -120,10 +120,10 @@ export default class LocalAdapter implements IAdapter {
         const stats = await fs.statAsync(path);
 
         return new Metadata({
-            path,
+            path: this.relativePath(path),
             name: basename(path),
             ext: extname(path),
-            parentDir: dirname(path),
+            parentDir: this.relativePath(dirname(path)),
             size: stats.size,
             isFile: stats.isFile(),
             isDir: stats.isDirectory(),
@@ -158,6 +158,10 @@ export default class LocalAdapter implements IAdapter {
     }
 
     private fullPath(path: string): string {
-        return resolve(this.basePath, path);
+        return resolve(this.rootPath, path);
+    }
+
+    private relativePath(path: string): string {
+        return relative(this.rootPath, path);
     }
 }
