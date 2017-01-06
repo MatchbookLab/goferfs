@@ -6,12 +6,12 @@ import { resolve, basename, dirname, extname, relative } from 'path';
 import { lookup as mimeLookup } from 'mime';
 import * as Bluebird from 'bluebird';
 
-import { IMetadata, IFile, IStreamFile, IAdapter } from '../types';
+import { IMetadata, IStreamFile, IReader, IWriter } from '../types';
 import Metadata from '../metadata';
 import File from '../file';
 import StreamFile from '../stream-file';
 
-export default class LocalAdapter implements IAdapter {
+export default class LocalAdapter implements IReader, IWriter {
     private rootPath: string;
 
     constructor(opts: { rootPath: string }) {

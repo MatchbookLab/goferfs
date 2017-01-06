@@ -13,5 +13,5 @@ export {
     IWriter,
     IFile,
     IMetadata,
-    IStreamFile,
+    IStreamFile
 };

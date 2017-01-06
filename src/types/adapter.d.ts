@@ -1,6 +1,8 @@
-import IReader from './reader';
-import IWriter from './writer';
-
-declare interface IAdapter extends IReader, IWriter {}
+declare interface IAdapter {
+    /**
+     * Check whether a file exists.
+     */
+    exists(path: string): Promise<boolean>;
+}
 
 export default IAdapter;

@@ -1,8 +1,9 @@
 import * as Stream from 'stream';
 
 import IMetadata from './metadata';
+import {IAdapter} from "./";
 
-declare interface IWriter {
+declare interface IWriter extends IAdapter {
     /**
      * Write a file.
      */
