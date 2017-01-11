@@ -1,13 +1,13 @@
 import * as chai from 'chai';
 
-import Filesystem from './filesystem';
+import Gofer from './index';
 import { IAdapter } from './types';
 import { Readable } from 'stream';
 
 chai.should();
 
 export default function(adapter: IAdapter) {
-    const filesystem = new Filesystem(adapter);
+    const filesystem = new Gofer(adapter);
 
     describe('The Basics', function () {
         it('should write and read', async() => {

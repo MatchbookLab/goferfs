@@ -1,11 +1,12 @@
 {
-  "name": "filesystem",
+  "name": "gofer-fs",
   "version": "0.0.0",
   "description": "Filesystem abstraction library",
-  "main": "index.js",
+  "main": "build/index.js",
   "scripts": {
     "build": "rimraf build && tsc",
-    "test": "mocha --require ts-node/register src/**/*.test.ts"
+    "test": "mocha --require ts-node/register src/**/*.test.ts",
+    "prepublish": "npm run build"
   },
   "repository": {
     "url": "http://github.com/CWSpear/filesystem",

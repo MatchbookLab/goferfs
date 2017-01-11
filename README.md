@@ -1,8 +1,6 @@
-# Filesystem Abstraction Library
+# Gofer
 
-**Note: this is not yet published on `npm`**
-
-*(cooler name TBD)*
+**Note: this is like pre-alpha and should not be used yet**
 
 The goal of this library is to provide a high level common API surface for manipulating files, regardless of where they're actually stored, be it locally, or in the cloud, like Amazon S3.
 
@@ -15,22 +13,22 @@ _**Note:** The API is still a bit up in the air, so a few things may be changing
 The API is pretty straight forward:
 
 ```js
-import Filesystem from 'filesystem';
-import LocalAdapter from 'filesystem-adapter-local';
+import Gofer from 'gofer-fs';
+import LocalAdapter from 'gofer-fs-adapter-local';
 
-const filesystem = new Filesystem(new LocalAdapter({ baseName: '/path/to/root' }));
+const gofer = new Gofer(new LocalAdapter({ baseName: '/path/to/root' }));
 
 // there are (currently?) 3 ways to save files:
-filesystem.write('test.txt', 'Contents'); // throws an error if file already exists
-filesystem.update('test.txt', 'Contents'); // throws an error if the file does not exist
-filesystem.put('test.txt', 'Contents'); // will write if file doesn't exist, otherwise update
+gofer.write('test.txt', 'Contents'); // throws an error if file already exists
+gofer.update('test.txt', 'Contents'); // throws an error if the file does not exist
+gofer.put('test.txt', 'Contents'); // will write if file doesn't exist, otherwise update
 
 // reading a file is straightforward:
-const { contents } = await filesystem.read('test.txt');
+const { contents } = await gofer.read('test.txt');
 console.log(contents); // "Contents"
 
 // files are wrapped in metadata
-const file = await filesystem.read('test.txt');
+const file = await gofer.read('test.txt');
 console.log(file); // prints something like:
 {
   name: 'test.txt',
@@ -46,32 +44,32 @@ console.log(file); // prints something like:
 }
 
 // if the directory doesn't exist, one is created for you
-filesystem.put('this/path/does/not/yet/exist/test.txt', 'Contents');
+gofer.put('this/path/does/not/yet/exist/test.txt', 'Contents');
 // (this returns all of the same metadata above except `contents`)
 
 // you can check to see if a file or directory exists:
-const exists = await filesystem.has('does/not/exists'); // exists === false
+const exists = await gofer.has('does/not/exists'); // exists === false
 
 // you can get the contents of a directory
-const directory = await filesystem.listContents('some/dir');
+const directory = await gofer.listContents('some/dir');
 // directory is an array of Metadata objects
 
 // you can delete a file
-filesystem.delete('test.txt');
+gofer.delete('test.txt');
 
 // you can also (recursively) delete a dir
-filesystem.deleteDir('some/dir');
+gofer.deleteDir('some/dir');
 
 // you can create an empty dir (or do nothing if it existed already)
-filesystem.createDir('some/other/dir');
+gofer.createDir('some/other/dir');
 
 // you can even copy and rename (move) files:
-filesystem.copy('test.txt', 'test2.txt');
-filesystem.rename('test.txt', 'test1.txt');
+gofer.copy('test.txt', 'test2.txt');
+gofer.rename('test.txt', 'test1.txt');
 
 // it of course supports streams
-filesystem.writeStream('test.txt', someReadableStream);
-const { stream } = filesystem.readStream('test.txt');
+gofer.writeStream('test.txt', someReadableStream);
+const { stream } = gofer.readStream('test.txt');
 ```
 
 The API always returns a promise (some adapters may be able to do certain things synchronously, but for consistency, it returns promises as some adapters have to do thing async).
@@ -87,13 +85,13 @@ We want to make it so you can cache files, so if you are using cloud storage, yo
 We want to have it so you can easily use multiple adapters:
 
 ```js
-const filesystem = new FilesystemManagter({
+const gofer = new GoferManagter({
   s3: s3Adapter, // Amazon S3
   gcs: gcsAdapter, // Google Cloud Storage
 });
 
-filesystem.put('s3://test.txt', 'Contents');
-filesystem.rename('s3://test.txt', 'gcs://test.txt');
+gofer.put('s3://test.txt', 'Contents');
+gofer.rename('s3://test.txt', 'gcs://test.txt');
 ```
 
 ### Lots of Adapters
