@@ -1,6 +1,6 @@
 {
   "name": "gofer-fs",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Filesystem abstraction library",
   "main": "build/index.js",
   "scripts": {
