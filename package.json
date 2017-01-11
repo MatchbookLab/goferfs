@@ -9,10 +9,13 @@
     "prepublish": "npm run build"
   },
   "repository": {
-    "url": "http://github.com/CWSpear/filesystem",
+    "url": "http://github.com/cohesivelabs/gofer-fs",
     "type": "git"
   },
-  "author": "CWSpear <cam@cameronspear.com>",
+  "author": "Cameron Spear <cam@cameronspear.com>",
+  "contributors": [
+    "Justen Martin <jmart@the-coder.com>"
+  ],
   "license": "MIT",
   "dependencies": {
     "bluebird": "^3.4.6",
