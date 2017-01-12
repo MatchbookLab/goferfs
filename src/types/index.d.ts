@@ -1,6 +1,7 @@
 import IFilesystem from './filesystem';
 import IAdapter from './adapter';
-import IReadOnly from './read-only';
+import IReader from './reader';
+import IWriter from './writer';
 import IFile from './file';
 import IMetadata from './metadata';
 import IStreamFile from './stream-file';
@@ -8,7 +9,8 @@ import IStreamFile from './stream-file';
 export {
     IFilesystem,
     IAdapter,
-    IReadOnly,
+    IReader,
+    IWriter,
     IFile,
     IMetadata,
     IStreamFile,

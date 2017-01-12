@@ -2,7 +2,7 @@ import IMetadata from './metadata';
 import IFile from './file';
 import IStreamFile from './stream-file';
 
-declare interface IReadOnly {
+declare interface IReader {
     /**
      * Check whether a file exists.
      */
@@ -49,4 +49,4 @@ declare interface IReadOnly {
     getVisibility(path: string): Promise<string>;
 }
 
-export default IReadOnly;
+export default IReader;
