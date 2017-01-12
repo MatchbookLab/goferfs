@@ -1,5 +1,5 @@
 {
-  "name": "gofer-fs",
+  "name": "goferfs",
   "version": "0.0.2",
   "description": "Filesystem abstraction library",
   "main": "build/index.js",
@@ -10,7 +10,7 @@
     "prepublish": "npm run build"
   },
   "repository": {
-    "url": "http://github.com/cohesivelabs/gofer-fs",
+    "url": "http://github.com/cohesivelabs/goferfs",
     "type": "git"
   },
   "author": "Cameron Spear <cam@cameronspear.com>",

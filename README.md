@@ -1,4 +1,4 @@
-# Gofer
+# Gofer Filesystem
 
 **Note: this is like pre-alpha and should not be used yet**
 
@@ -13,8 +13,8 @@ _**Note:** The API is still a bit up in the air, so a few things may be changing
 The API is pretty straight forward:
 
 ```js
-import Gofer from 'gofer-fs';
-import LocalAdapter from 'gofer-fs-adapter-local';
+import Gofer from 'goferfs';
+import LocalAdapter from 'goferfs-adapter-local';
 
 const gofer = new Gofer(new LocalAdapter({ baseName: '/path/to/root' }));
 
