@@ -1,5 +1,5 @@
 import * as Stream from 'stream';
-import { IStreamFile, IMetadata } from './types';
+import { IStreamFile, IMetadata, Visibility } from './types';
 
 export default class StreamFile implements IStreamFile {
     stream: Stream;
@@ -7,6 +7,7 @@ export default class StreamFile implements IStreamFile {
     ext: string;
     path: string;
     parentDir: string;
+    visibility: Visibility;
     size: number;
     isFile: boolean;
     isDir: boolean;
@@ -20,6 +21,7 @@ export default class StreamFile implements IStreamFile {
         this.ext = metadata.ext;
         this.path = metadata.path;
         this.parentDir = metadata.parentDir;
+        this.visibility = metadata.visibility;
         this.size = metadata.size;
         this.isFile = metadata.isFile;
         this.isDir = metadata.isDir;

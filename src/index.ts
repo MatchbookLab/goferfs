@@ -1,7 +1,7 @@
-import { basename, resolve, dirname } from 'path';
+import { dirname } from 'path';
 import * as Stream from 'stream';
 
-import { IMetadata, IFile, IStreamFile, IFilesystem, IAdapter } from './types';
+import { IMetadata, IFile, IStreamFile, IFilesystem, IAdapter, Visibility } from './types';
 
 export default class Filesystem implements IFilesystem {
     private adapter: IAdapter;
@@ -10,20 +10,20 @@ export default class Filesystem implements IFilesystem {
         this.adapter = adapter;
     }
 
-    async write(path: string, contents: string): Promise<IMetadata> {
+    async write(path: string, contents: string, options?: { visibility?: Visibility }): Promise<IMetadata> {
         path = this.cleanPath(path);
 
         await this.ensureDirectory(path);
 
-        return this.adapter.write(path, contents);
+        return this.adapter.write(path, contents, options);
     }
 
-    async writeStream(path: string, stream: Stream): Promise<IMetadata> {
+    async writeStream(path: string, stream: Stream, options?: { visibility?: Visibility }): Promise<IMetadata> {
         path = this.cleanPath(path);
 
         await this.ensureDirectory(path);
 
-        return this.adapter.writeStream(path, stream);
+        return this.adapter.writeStream(path, stream, options);
     }
 
     exists(path: string): Promise<boolean> {
@@ -41,31 +41,12 @@ export default class Filesystem implements IFilesystem {
         return this.adapter.readStream(path);
     }
 
-    listContents(directory: string = '', recursive: boolean = false): Promise<Array<IMetadata>> {
-        return this.adapter.listContents(directory, recursive);
-    }
-
     getMetadata(path: string): Promise<IMetadata> {
         path = this.cleanPath(path);
         return this.adapter.getMetadata(path);
     }
 
-    getSize(path: string): Promise<number> {
-        path = this.cleanPath(path);
-        return this.adapter.getSize(path);
-    }
-
-    getMimetype(path: string): Promise<string> {
-        path = this.cleanPath(path);
-        return this.adapter.getMimetype(path);
-    }
-
-    getTimestamp(path: string): Promise<Date> {
-        path = this.cleanPath(path);
-        return this.adapter.getTimestamp(path);
-    }
-
-    getVisibility(path: string): Promise<string> {
+    getVisibility(path: string): Promise<Visibility> {
         path = this.cleanPath(path);
         return this.adapter.getVisibility(path);
     }
@@ -111,60 +92,10 @@ export default class Filesystem implements IFilesystem {
         return null;
     }
 
-    setVisibility(path: string, visibility: string): Promise<IMetadata> {
+    setVisibility(path: string, visibility: Visibility): Promise<IMetadata> {
         path = this.cleanPath(path);
         return this.adapter.setVisibility(path, visibility);
     }
-
-
-    async create(path: string, contents: string): Promise<IMetadata> {
-        path = this.cleanPath(path);
-
-        if (await this.exists(path)) {
-            throw new Error('Cannot create a file that already exists. Use [create] or [update]');
-        }
-
-        await this.ensureDirectory(path);
-
-        return this.adapter.write(path, contents);
-    }
-
-    async createStream(path: string, stream: Stream): Promise<IMetadata> {
-        path = this.cleanPath(path);
-
-        if (await this.exists(path)) {
-            throw new Error('Cannot create a file that already exists. Use [create] or [update]');
-        }
-
-        await this.ensureDirectory(path);
-
-        return this.adapter.writeStream(path, stream);
-    }
-
-    async update(path: string, contents: string): Promise<IMetadata> {
-        path = this.cleanPath(path);
-
-        if (!(await this.exists(path))) {
-            throw new Error('Cannot update a file that does not exists. Use [create] or [write]');
-        }
-
-        await this.ensureDirectory(path);
-
-        return this.adapter.write(path, contents);
-    }
-
-    async updateStream(path: string, stream: Stream): Promise<IMetadata> {
-        path = this.cleanPath(path);
-
-        if (!(await this.exists(path))) {
-            throw new Error('Cannot update a file that does not exists. Use [create] or [write]');
-        }
-
-        await this.ensureDirectory(path);
-
-        return this.adapter.writeStream(path, stream);
-    }
-
 
     private ensureDirectory(path: string) {
         path = this.cleanPath(path);

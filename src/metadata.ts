@@ -1,10 +1,11 @@
-import { IMetadata } from './types';
+import { IMetadata, Visibility } from './types';
 
 export default class Metadata implements IMetadata {
     name: string;
     ext: string;
     path: string;
     parentDir: string;
+    visibility: Visibility;
     size: number;
     isFile: boolean;
     isDir: boolean;
@@ -16,6 +17,7 @@ export default class Metadata implements IMetadata {
         ext: string;
         path: string;
         parentDir: string;
+        visibility: Visibility;
         size: number;
         isFile: boolean;
         isDir: boolean;
@@ -26,6 +28,7 @@ export default class Metadata implements IMetadata {
         this.ext = paramaters.ext;
         this.path = paramaters.path;
         this.parentDir = paramaters.parentDir;
+        this.visibility = paramaters.visibility;
         this.size = paramaters.size;
         this.isFile = paramaters.isFile;
         this.isDir = paramaters.isDir;

@@ -18,10 +18,8 @@ import LocalAdapter from 'goferfs-adapter-local';
 
 const gofer = new Gofer(new LocalAdapter({ baseName: '/path/to/root' }));
 
-// there are (currently?) 3 ways to save files:
-gofer.write('test.txt', 'Contents'); // throws an error if file already exists
-gofer.update('test.txt', 'Contents'); // throws an error if the file does not exist
-gofer.put('test.txt', 'Contents'); // will write if file doesn't exist, otherwise update
+// write a file (overrides contents if it already exists)
+gofer.write('test.txt', 'Contents');
 
 // reading a file is straightforward:
 const { contents } = await gofer.read('test.txt');
@@ -44,15 +42,11 @@ console.log(file); // prints something like:
 }
 
 // if the directory doesn't exist, one is created for you
-gofer.put('this/path/does/not/yet/exist/test.txt', 'Contents');
+gofer.write('this/path/does/not/yet/exist/test.txt', 'Contents');
 // (this returns all of the same metadata above except `contents`)
 
 // you can check to see if a file or directory exists:
 const exists = await gofer.has('does/not/exists'); // exists === false
-
-// you can get the contents of a directory
-const directory = await gofer.listContents('some/dir');
-// directory is an array of Metadata objects
 
 // you can delete a file
 gofer.delete('test.txt');
@@ -67,7 +61,7 @@ gofer.createDir('some/other/dir');
 gofer.copy('test.txt', 'test2.txt');
 gofer.rename('test.txt', 'test1.txt');
 
-// it of course supports streams
+// it, of course, supports streams
 gofer.writeStream('test.txt', someReadableStream);
 const { stream } = gofer.readStream('test.txt');
 ```
@@ -85,12 +79,12 @@ We want to make it so you can cache files, so if you are using cloud storage, yo
 We want to have it so you can easily use multiple adapters:
 
 ```js
-const gofer = new GoferManagter({
+const gofer = new GoferManager({
   s3: s3Adapter, // Amazon S3
   gcs: gcsAdapter, // Google Cloud Storage
 });
 
-gofer.put('s3://test.txt', 'Contents');
+gofer.write('s3://test.txt', 'Contents');
 gofer.rename('s3://test.txt', 'gcs://test.txt');
 ```
 
