@@ -3,7 +3,7 @@ import * as Stream from 'stream';
 import IMetadata from './metadata';
 import IFile from './file';
 import IStreamFile from './stream-file';
-import Visibility from './visibility';
+import Visibility from '../types/visibility';
 
 declare interface IAdapter {
     //////////////////

@@ -1,9 +1,12 @@
 import { dirname } from 'path';
 import * as Stream from 'stream';
 
-import { IMetadata, IFile, IStreamFile, IFilesystem, IAdapter, Visibility } from './types';
+import { IMetadata, IFile, IStreamFile, IFilesystem, IAdapter } from '../interfaces';
+import { Visibility } from '../types';
 
-export default class Filesystem implements IFilesystem {
+export * from '../types';
+
+export default class Gofer implements IFilesystem {
     private adapter: IAdapter;
 
     constructor (adapter: IAdapter) {
