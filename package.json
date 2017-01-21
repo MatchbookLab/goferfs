@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "description": "Filesystem abstraction library",
   "main": "build/index.js",
+  "files": [
+    "./build"
+  ],
   "scripts": {
     "build": "rimraf build && npm run lint && tsc",
     "test": "mocha --require ts-node/register src/**/*.test.ts",
