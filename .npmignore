@@ -4,3 +4,5 @@ tslint.json
 tsconfig.json
 yarn.lock
 .editorconfig
+
+!build/
