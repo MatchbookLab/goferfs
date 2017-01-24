@@ -1,4 +1,5 @@
-import { IMetadata, Visibility } from './types';
+import { IMetadata } from '../interfaces';
+import { Visibility } from './';
 
 export default class Metadata implements IMetadata {
     name: string;

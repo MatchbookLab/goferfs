@@ -1,4 +1,4 @@
-import Visibility from './visibility';
+import Visibility from '../types/visibility';
 
 declare interface IMetadata {
     name: string;

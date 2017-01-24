@@ -1,5 +1,7 @@
 import * as Stream from 'stream';
-import { IStreamFile, IMetadata, Visibility } from './types';
+
+import { IStreamFile, IMetadata } from '../interfaces';
+import { Visibility } from './';
 
 export default class StreamFile implements IStreamFile {
     stream: Stream;

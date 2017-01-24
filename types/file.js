@@ -1,21 +1,7 @@
-import { IFile, IMetadata, Visibility } from './types';
-
-export default class File implements IFile {
-    contents: string;
-    name: string;
-    ext: string;
-    path: string;
-    parentDir: string;
-    visibility: Visibility;
-    size: number;
-    isFile: boolean;
-    isDir: boolean;
-    timestamp: Date;
-    mimetype: string;
-
-    constructor(metadata: IMetadata, contents: string) {
+"use strict";
+var File = (function () {
+    function File(metadata, contents) {
         this.contents = contents;
-
         this.name = metadata.name;
         this.ext = metadata.ext;
         this.path = metadata.path;
@@ -27,4 +13,7 @@ export default class File implements IFile {
         this.timestamp = metadata.timestamp;
         this.mimetype = metadata.mimetype;
     }
-}
+    return File;
+}());
+exports.__esModule = true;
+exports["default"] = File;
