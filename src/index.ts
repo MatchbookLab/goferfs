@@ -6,10 +6,17 @@ import { Visibility } from '../types';
 
 export * from '../types';
 
+const { version } = require('../../package.json');
+
 export default class Gofer implements IFilesystem {
     private adapter: IAdapter;
 
+    targetVersion: string;
+
     constructor (adapter: IAdapter) {
+        this.targetVersion = version;
+        Gofer.versionCheck(adapter.targetVersion);
+
         this.adapter = adapter;
     }
 
@@ -108,5 +115,34 @@ export default class Gofer implements IFilesystem {
 
     private cleanPath(path: string): string {
         return path.replace(/^\.?\/+/, '');
+    }
+
+    static versionCheck(targetVersion: string): void {
+        // ensure it's a string (adapter may not use TypeScript)
+        targetVersion += '';
+
+        // first, make sure the target version is in the right format
+        const matches = targetVersion.match(/^(\d+)\.(\d+)$/);
+        if (!matches) {
+            throw new Error(`Adapter's target version must be in the form for "<major>.<minor>"`);
+        }
+
+        const [, targetMajor, targetMinor] = matches;
+        const [, major, minor] = version.match(/^(\d+)\.(\d+)\.\d+$/);
+
+        const baseMsg = `The version of Gofer is "${version}", but the supplied adapter is targeting "${targetVersion}"`;
+
+        if (major > targetMajor || major < targetMajor) {
+            const extraMsg = major < targetMajor ? `version of "goferfs" to match` : `adapter to match, or contact the author if an appropriate update is not available`;
+            throw new Error(`${baseMsg}. Incompatibility is likely to occur. Please upgrade your ${extraMsg}.`);
+        }
+
+        if (minor > targetMinor) {
+            console.warn(`${baseMsg}. Some features may not be available, but everything that is should work fine.`);
+        }
+
+        if (minor < targetMinor) {
+            console.warn(`${baseMsg}. The adapter may have some extra features that may not be available, but everything that is should work fine.`);
+        }
     }
 }
