@@ -1,5 +1,6 @@
 src/
 docs/
+scripts/
 tslint.json
 tsconfig.json
 yarn.lock
