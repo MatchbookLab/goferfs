@@ -6,6 +6,12 @@ import IStreamFile from './stream-file';
 import Visibility from '../types/visibility';
 
 declare interface IAdapter {
+    ////////////////
+    // PROPERTIES //
+    ////////////////
+
+    targetVersion: string;
+
     //////////////////
     // READ METHODS //
     //////////////////
