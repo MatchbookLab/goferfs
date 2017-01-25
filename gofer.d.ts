@@ -4,6 +4,8 @@ import { IFilesystem, IAdapter, IMetadata, IFile, IStreamFile } from './interfac
 import { Visibility } from './types';
 
 export default class Gofer implements IFilesystem {
+    targetVersion: string;
+
     constructor(adapter: IAdapter);
 
     exists(path: string): Promise<boolean>;
