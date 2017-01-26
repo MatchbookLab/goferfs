@@ -2,16 +2,16 @@
   "name": "goferfs",
   "description": "Filesystem Abstraction Library",
   "version": "0.7.0",
-  "main": "./index.js",
+  "main": "index.js",
   "engines": {
     "node": ">=4.0"
   },
   "scripts": {
     "build": "rimraf *.js types/*.js && npm run lint && tsc",
-    "test": "tsc && ava",
-    "lint": "tslint ./src/**/*.ts",
-    "prepublish": "npm run build",
-    "publish": "./scripts/publish.sh"
+    "test": "npm run build && ava",
+    "lint": "tslint **/*.ts",
+    "prepublish": "npm test",
+    "publish": "scripts/publish.sh"
   },
   "repository": {
     "url": "http://github.com/cohesivelabs/goferfs",
