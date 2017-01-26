@@ -126,7 +126,7 @@ export default class Gofer implements IFilesystem {
         }
 
         const [, targetMajor, targetMinor] = matches;
-        const [, major, minor] = currentVersion.match(/^(\d+)\.(\d+)\.\d+$/);
+        const [, major, minor] = currentVersion.match(/^(\d+)\.(\d+)\.\d+(?:-.+)?$/);
 
         const baseMsg = `The version of Gofer is "${currentVersion}", but the supplied adapter is targeting "${targetVersion}"`;
 
