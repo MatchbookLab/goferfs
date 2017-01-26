@@ -100,7 +100,7 @@ We also are working on a test suite so you can basically call `testSuite(myAdapt
 
 ## Contributing
 
-In these early stages, we would love some feedback on the [interfaces](types), especially. I would _definitely_ not be writing any adapters based on this yet, but once the API is stabilized, it would gladly welcome contributed adapters for various services. (The idea is that each adapter (except maybe `local` and `memory`?) will be in its own repo.)
+In these early stages, we would love some feedback on the [interfaces](src/types), especially. I would _definitely_ not be writing any adapters based on this yet, but once the API is stabilized, it would gladly welcome contributed adapters for various services. (The idea is that each adapter (except maybe `local` and `memory`?) will be in its own repo.)
 
 ## Similarities to the PHP League's Flysystem
 

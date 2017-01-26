@@ -1,10 +1,8 @@
 import { dirname } from 'path';
 import * as Stream from 'stream';
 
-import { IMetadata, IFile, IStreamFile, IFilesystem, IAdapter } from '../interfaces';
-import { Visibility } from '../types';
-
-export * from '../types';
+import { IFilesystem, IAdapter } from './interfaces';
+import { Visibility, Metadata, File, StreamFile } from './types';
 
 const { version } = require('../../package.json');
 
@@ -20,7 +18,7 @@ export default class Gofer implements IFilesystem {
         this.adapter = adapter;
     }
 
-    async write(path: string, contents: string, options?: { visibility?: Visibility }): Promise<IMetadata> {
+    async write(path: string, contents: string, options?: { visibility?: Visibility }): Promise<Metadata> {
         path = this.cleanPath(path);
 
         await this.ensureDirectory(path);
@@ -28,7 +26,7 @@ export default class Gofer implements IFilesystem {
         return this.adapter.write(path, contents, options);
     }
 
-    async writeStream(path: string, stream: Stream, options?: { visibility?: Visibility }): Promise<IMetadata> {
+    async writeStream(path: string, stream: Stream, options?: { visibility?: Visibility }): Promise<Metadata> {
         path = this.cleanPath(path);
 
         await this.ensureDirectory(path);
@@ -41,17 +39,17 @@ export default class Gofer implements IFilesystem {
         return this.adapter.exists(path);
     }
 
-    read(path: string): Promise<IFile> {
+    read(path: string): Promise<File> {
         path = this.cleanPath(path);
         return this.adapter.read(path);
     }
 
-    readStream(path: string): Promise<IStreamFile> {
+    readStream(path: string): Promise<StreamFile> {
         path = this.cleanPath(path);
         return this.adapter.readStream(path);
     }
 
-    getMetadata(path: string): Promise<IMetadata> {
+    getMetadata(path: string): Promise<Metadata> {
         path = this.cleanPath(path);
         return this.adapter.getMetadata(path);
     }
@@ -61,14 +59,14 @@ export default class Gofer implements IFilesystem {
         return this.adapter.getVisibility(path);
     }
 
-    move(oldPath: string, newPath: string): Promise<IMetadata> {
+    move(oldPath: string, newPath: string): Promise<Metadata> {
         oldPath = this.cleanPath(oldPath);
         newPath = this.cleanPath(newPath);
 
         return this.adapter.move(oldPath, newPath);
     }
 
-    copy(oldPath: string, clonedPath: string): Promise<IMetadata> {
+    copy(oldPath: string, clonedPath: string): Promise<Metadata> {
         oldPath = this.cleanPath(oldPath);
         clonedPath = this.cleanPath(clonedPath);
 
@@ -91,7 +89,7 @@ export default class Gofer implements IFilesystem {
         return this.adapter.deleteDir(path);
     }
 
-    async createDir(path: string): Promise<IMetadata> {
+    async createDir(path: string): Promise<Metadata> {
         path = this.cleanPath(path);
 
         if (!(await this.exists(path))) {
@@ -102,7 +100,7 @@ export default class Gofer implements IFilesystem {
         return null;
     }
 
-    setVisibility(path: string, visibility: Visibility): Promise<IMetadata> {
+    setVisibility(path: string, visibility: Visibility): Promise<Metadata> {
         path = this.cleanPath(path);
         return this.adapter.setVisibility(path, visibility);
     }

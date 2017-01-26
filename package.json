@@ -2,13 +2,12 @@
   "name": "goferfs",
   "description": "Filesystem Abstraction Library",
   "version": "0.5.4",
-  "main": "./build/src/index.js",
-  "types": "./gofer.d.ts",
+  "main": "./index.js",
   "engines": {
     "node": ">=4.0"
   },
   "scripts": {
-    "build": "rimraf build && npm run lint && tsc",
+    "build": "rimraf *.js types/*.js && npm run lint && tsc",
     "test": "tsc && ava",
     "lint": "tslint ./src/**/*.ts",
     "prepublish": "npm run build",

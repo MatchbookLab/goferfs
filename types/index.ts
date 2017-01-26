@@ -1,4 +1,4 @@
-import Visibility from '../types/visibility';
+import Visibility from './visibility';
 import File from './file';
 import Metadata from './metadata';
 import StreamFile from './stream-file';

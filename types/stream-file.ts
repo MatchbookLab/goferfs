@@ -1,9 +1,8 @@
 import * as Stream from 'stream';
 
-import { IStreamFile, IMetadata } from '../interfaces';
-import { Visibility } from './';
+import { Visibility, Metadata } from './';
 
-export default class StreamFile implements IStreamFile {
+export default class StreamFile {
     stream: Stream;
     name: string;
     ext: string;
@@ -16,7 +15,7 @@ export default class StreamFile implements IStreamFile {
     timestamp: Date;
     mimetype: string;
 
-    constructor(metadata: IMetadata, stream: Stream) {
+    constructor(metadata: Metadata, stream: Stream) {
         this.stream = stream;
 
         this.name = metadata.name;

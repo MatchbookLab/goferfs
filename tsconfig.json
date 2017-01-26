@@ -5,10 +5,10 @@
         "noImplicitAny": true,
         "removeComments": true,
         "preserveConstEnums": true,
-        "outDir": "./build"
+        "outDir": "."
     },
     "include": [
-        "src/**/*"
+        "**/*"
     ],
     "exclude": [
         "node_modules"

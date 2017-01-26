@@ -1,7 +1,6 @@
-import { IFile, IMetadata } from '../interfaces';
-import { Visibility } from './';
+import { Visibility, Metadata } from './';
 
-export default class File implements IFile {
+export default class File {
     contents: string;
     name: string;
     ext: string;
@@ -14,7 +13,7 @@ export default class File implements IFile {
     timestamp: Date;
     mimetype: string;
 
-    constructor(metadata: IMetadata, contents: string) {
+    constructor(metadata: Metadata, contents: string) {
         this.contents = contents;
 
         this.name = metadata.name;

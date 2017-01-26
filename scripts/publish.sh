@@ -2,15 +2,19 @@
 
 set -e
 
+function printVersion() {
+    cat ./package.json | grep "\"version\":" | cut -d':' -f2 | cut -d'"' -f2
+}
+
 np $1
 
-version=`grep version package.json | cut -c 15- | rev | cut -c 3- | rev`
+version=$(printVersion)
 
 pushd interfaces
 
-interfaces_version=`grep version package.json | cut -c 15- | rev | cut -c 3- | rev`
+interfacesVersion=$(printVersion)
 
-sed -i '' "s/\"version\": \"{$interfaces_version}\"/\"version\": \"${version}\"/" package.json
+sed -i '' "s/\"version\": \"${interfacesVersion}\"/\"version\": \"${version}\"/" package.json
 
 npm publish
 
@@ -18,9 +22,9 @@ popd
 
 pushd types
 
-types_version=`grep version package.json | cut -c 15- | rev | cut -c 3- | rev`
+typesVersion=$(printVersion)
 
-sed -i '' "s/\"version\": \"{$types_version}\"/\"version\": \"${version}\"/" package.json
+sed -i '' "s/\"version\": \"${typesVersion}\"/\"version\": \"${version}\"/" package.json
 
 npm publish
 

@@ -1,9 +1,6 @@
 import * as Stream from 'stream';
 
-import IMetadata from './metadata';
-import IFile from './file';
-import IStreamFile from './stream-file';
-import Visibility from '../types/visibility';
+import { Metadata, File, StreamFile, Visibility } from '../types';
 
 declare interface IAdapter {
     ////////////////
@@ -24,17 +21,17 @@ declare interface IAdapter {
     /**
      * Read a file.
      */
-    read(path: string): Promise<IFile>;
+    read(path: string): Promise<File>;
 
     /**
      * Read a file as a stream.
      */
-    readStream(path: string): Promise<IStreamFile>;
+    readStream(path: string): Promise<StreamFile>;
 
     /**
      * Get all the meta data of a file or directory.
      */
-    getMetadata(path: string): Promise<IMetadata>;
+    getMetadata(path: string): Promise<Metadata>;
 
     /**
      * Get the visibility of a file.
@@ -48,22 +45,22 @@ declare interface IAdapter {
     /**
      * Write a file.
      */
-    write(path: string, contents: string, options?: { visibility?: Visibility }): Promise<IMetadata>;
+    write(path: string, contents: string, options?: { visibility?: Visibility }): Promise<Metadata>;
 
     /**
      * Write a file using a stream.
      */
-    writeStream(path: string, stream: Stream, options?: { visibility?: Visibility }): Promise<IMetadata>;
+    writeStream(path: string, stream: Stream, options?: { visibility?: Visibility }): Promise<Metadata>;
 
     /**
      * Rename a file.
      */
-    move(oldPath: string, newPath: string): Promise<IMetadata>;
+    move(oldPath: string, newPath: string): Promise<Metadata>;
 
     /**
      * Copy a file.
      */
-    copy(oldPath: string, clonedPath: string): Promise<IMetadata>;
+    copy(oldPath: string, clonedPath: string): Promise<Metadata>;
 
     /**
      * Delete a file.
@@ -78,12 +75,12 @@ declare interface IAdapter {
     /**
      * Create a directory.
      */
-    createDir(path: string): Promise<IMetadata>;
+    createDir(path: string): Promise<Metadata>;
 
     /**
      * Set the visibility for a file.
      */
-    setVisibility(path: string, visibility: Visibility): Promise<IMetadata>;
+    setVisibility(path: string, visibility: Visibility): Promise<Metadata>;
 }
 
 export default IAdapter;
