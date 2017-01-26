@@ -10,8 +10,7 @@
     "build": "rimraf *.js types/*.js && npm run lint && tsc",
     "test": "npm run build && ava",
     "lint": "tslint --exclude=node_modules/**/* **/*.ts",
-    "prepublish": "npm test",
-    "publish": "scripts/publish.sh"
+    "prepublish": "npm test"
   },
   "repository": {
     "url": "http://github.com/cohesivelabs/goferfs",
