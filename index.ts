@@ -1,19 +1,19 @@
 import { dirname } from 'path';
 import * as Stream from 'stream';
 
-import { IFilesystem, IAdapter } from './interfaces';
+import { IFilesystem, IAdapter } from './types/interfaces';
 import { Visibility, Metadata, File, StreamFile } from './types';
 
 const { version } = require('./package.json');
 
 export default class Gofer implements IFilesystem {
-    private adapter: IAdapter;
-
     targetVersion: string;
+
+    private adapter: IAdapter;
 
     constructor (adapter: IAdapter) {
         this.targetVersion = version;
-        Gofer.versionCheck(adapter.targetVersion);
+        Gofer.versionCheck(adapter.targetVersion, this.targetVersion);
 
         this.adapter = adapter;
     }
@@ -115,7 +115,7 @@ export default class Gofer implements IFilesystem {
         return path.replace(/^\.?\/+/, '');
     }
 
-    static versionCheck(targetVersion: string): void {
+    static versionCheck(targetVersion: string, currentVersion: string): void {
         // ensure it's a string (adapter may not use TypeScript)
         targetVersion += '';
 
@@ -126,9 +126,9 @@ export default class Gofer implements IFilesystem {
         }
 
         const [, targetMajor, targetMinor] = matches;
-        const [, major, minor] = version.match(/^(\d+)\.(\d+)\.\d+$/);
+        const [, major, minor] = currentVersion.match(/^(\d+)\.(\d+)\.\d+$/);
 
-        const baseMsg = `The version of Gofer is "${version}", but the supplied adapter is targeting "${targetVersion}"`;
+        const baseMsg = `The version of Gofer is "${currentVersion}", but the supplied adapter is targeting "${targetVersion}"`;
 
         if (major > targetMajor || major < targetMajor) {
             const extraMsg = major < targetMajor ? `version of "goferfs" to match` : `adapter to match, or contact the author if an appropriate update is not available`;

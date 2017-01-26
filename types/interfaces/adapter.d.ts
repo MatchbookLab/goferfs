@@ -1,6 +1,6 @@
 import * as Stream from 'stream';
 
-import { Metadata, File, StreamFile, Visibility } from '../types';
+import { Metadata, File, StreamFile, Visibility } from '../';
 
 declare interface IAdapter {
     ////////////////
