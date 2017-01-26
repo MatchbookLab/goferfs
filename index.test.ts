@@ -11,7 +11,7 @@ test.afterEach.always((t) => {
     t.context.warnStub.restore();
 });
 
-const { version } = require('../../package.json');
+const { version } = require('./package.json');
 const [, major, minor] = version.match(/^(\d+)\.(\d+)\.\d+$/);
 
 test('version check should enforce "<major>.<minor>"', (t) => {
