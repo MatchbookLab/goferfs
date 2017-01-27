@@ -1,6 +1,6 @@
 {
   "name": "goferfs-types",
-  "version": "1.0.0-5",
+  "version": "1.0.0-6",
   "description": "Interfaces for Gofer",
   "main": "index.js",
   "scripts": {
