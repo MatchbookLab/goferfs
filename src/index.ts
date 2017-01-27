@@ -4,7 +4,7 @@ import * as Stream from 'stream';
 import { IFilesystem, IAdapter } from './types/interfaces';
 import { Visibility, Metadata, File, StreamFile } from './types';
 
-const { version } = require('./package.json');
+const { version } = require('../package.json');
 
 export default class Gofer implements IFilesystem {
     targetVersion: string;

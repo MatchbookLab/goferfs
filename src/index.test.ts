@@ -1,7 +1,7 @@
 import test from 'ava';
 import * as sinon from 'sinon';
 
-import Gofer from './';
+import Gofer from './.';
 
 test.beforeEach((t) => {
     t.context.warnStub = sinon.stub(console, 'warn');

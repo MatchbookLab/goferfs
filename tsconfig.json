@@ -4,11 +4,10 @@
         "module": "commonjs",
         "noImplicitAny": true,
         "removeComments": true,
-        "preserveConstEnums": true,
-        "outDir": "."
+        "preserveConstEnums": true
     },
     "include": [
-        "**/*"
+        "src/**/*"
     ],
     "exclude": [
         "node_modules"
