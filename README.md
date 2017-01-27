@@ -26,7 +26,6 @@ import { Visibility } from 'goferfs/types';
 const gofer = new Gofer(new LocalAdapter({ rootPath: '/path/to/root' }));
 
 (async () => {
-
     // write a file (overrides contents if it already exists)
     await gofer.write('test.txt', 'Contents');
 
