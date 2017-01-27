@@ -1,7 +1,23 @@
-"use strict";
-class StreamFile {
-    constructor(metadata, stream) {
+import * as Stream from 'stream';
+
+import { Visibility, Metadata } from '.';
+
+export default class StreamFile {
+    stream: Stream;
+    name: string;
+    ext: string;
+    path: string;
+    parentDir: string;
+    visibility: Visibility;
+    size: number;
+    isFile: boolean;
+    isDir: boolean;
+    timestamp: Date;
+    mimetype: string;
+
+    constructor(metadata: Metadata, stream: Stream) {
         this.stream = stream;
+
         this.name = metadata.name;
         this.ext = metadata.ext;
         this.path = metadata.path;
@@ -14,5 +30,3 @@ class StreamFile {
         this.mimetype = metadata.mimetype;
     }
 }
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = StreamFile;

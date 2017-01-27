@@ -1,7 +1,21 @@
-"use strict";
-class File {
-    constructor(metadata, contents) {
+import { Visibility, Metadata } from '.';
+
+export default class File {
+    contents: string;
+    name: string;
+    ext: string;
+    path: string;
+    parentDir: string;
+    visibility: Visibility;
+    size: number;
+    isFile: boolean;
+    isDir: boolean;
+    timestamp: Date;
+    mimetype: string;
+
+    constructor(metadata: Metadata, contents: string) {
         this.contents = contents;
+
         this.name = metadata.name;
         this.ext = metadata.ext;
         this.path = metadata.path;
@@ -14,5 +28,3 @@ class File {
         this.mimetype = metadata.mimetype;
     }
 }
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = File;

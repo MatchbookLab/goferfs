@@ -1,8 +1,8 @@
 import { dirname } from 'path';
 import * as Stream from 'stream';
 
-import { IFilesystem, IAdapter } from './types/interfaces';
-import { Visibility, Metadata, File, StreamFile } from './types';
+import { IFilesystem, IAdapter } from '../types/interfaces';
+import { Visibility, Metadata, File, StreamFile } from '../types';
 
 const { version } = require('../package.json');
 

@@ -1,2 +1,7 @@
-// this is simply here to allow you to `import { IAdapter } from 'goferfs/types/interfaces';
-export * from '../../src/types/interfaces';
+import IFilesystem from './filesystem';
+import IAdapter from './adapter';
+
+export {
+    IFilesystem,
+    IAdapter,
+};

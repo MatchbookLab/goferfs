@@ -1,4 +1,4 @@
-import { Visibility } from './';
+import { Visibility } from '.';
 
 export default class Metadata {
     name: string;
