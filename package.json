@@ -8,7 +8,7 @@
     "node": ">=4.0"
   },
   "scripts": {
-    "build": "rimraf src/**/*.js && npm run lint && tsc",
+    "build": "rimraf src/**/*.js types/**/*.js && npm run lint && tsc",
     "test": "npm run build && ava src/**/*.test.js",
     "lint": "tslint src/**/*.ts",
     "prepublish": "npm test"
