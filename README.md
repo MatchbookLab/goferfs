@@ -1,69 +1,85 @@
 # Gofer Filesystem
 
-**Note: this is like pre-alpha and should not be used yet**
+**Note: this is beta status and things should work, but changes are still very possible**
 
 The goal of this library is to provide a high level common API surface for manipulating files, regardless of where they're actually stored, be it locally, or in the cloud, like Amazon S3.
 
 It should be able to easily swap in different adapters (i.e. `s3` and `local` are (planned) adapters).
 
-## API
+## Installing
 
-_**Note:** The API is still a bit up in the air, so a few things may be changing_
+To install, you have to install the Gofer core, and at least one adapter (in this example, the Local Adapter):
+
+```
+npm install goferfs goferfs-adapter-local
+```
+
+## API
 
 The API is pretty straight forward:
 
 ```js
 import Gofer from 'goferfs';
 import LocalAdapter from 'goferfs-adapter-local';
+import { Visibility } from 'goferfs/types';
 
-const gofer = new Gofer(new LocalAdapter({ baseName: '/path/to/root' }));
+const gofer = new Gofer(new LocalAdapter({ rootPath: '/path/to/root' }));
 
-// write a file (overrides contents if it already exists)
-gofer.write('test.txt', 'Contents');
+(async () => {
 
-// reading a file is straightforward:
-const { contents } = await gofer.read('test.txt');
-console.log(contents); // "Contents"
+    // write a file (overrides contents if it already exists)
+    await gofer.write('test.txt', 'Contents');
 
-// files are wrapped in metadata
-const file = await gofer.read('test.txt');
-console.log(file); // prints something like:
-{
-  name: 'test.txt',
-  ext: '.txt',
-  path: '/path/to/root/test.txt',
-  parentDir: '/path/to/root',
-  size: 8,
-  isFile: true,
-  isDir: false,
-  timestamp: Date('2016-12-22T20:17:27.000Z'),
-  mimetype: 'text/plain',
-  contents: 'Contents',
-}
+    // reading a file is straightforward:
+    const { contents } = await gofer.read('test.txt');
+    console.log(contents); // "Contents"
 
-// if the directory doesn't exist, one is created for you
-gofer.write('this/path/does/not/yet/exist/test.txt', 'Contents');
-// (this returns all of the same metadata above except `contents`)
+    // files are wrapped in metadata
+    const file = await gofer.read('test.txt');
+    console.log(file); // prints something like:
+    {
+        name: 'test.txt',
+        ext: '.txt',
+        path: 'test.txt', // these are relative to the rootPath passed in the constructor
+        parentDir: '.', // these are relative to the rootPath passed in the constructor
+        size: 8,
+        isFile: true,
+        isDir: false,
+        timestamp: Date('2016-12-22T20:17:27.000Z'),
+        mimetype: 'text/plain',
+        contents: 'Contents',
+    }
 
-// you can check to see if a file or directory exists:
-const exists = await gofer.has('does/not/exists'); // exists === false
+    // if the directory doesn't exist, one is created for you
+    const metadata = await gofer.write('this/path/does/not/yet/exist/test.txt', 'Contents');
+    // (this returns all of the same metadata above except `contents`)
 
-// you can delete a file
-gofer.delete('test.txt');
+    // you can check to see if a file or directory exists:
+    const exists = await gofer.has('does/not/exists'); // exists === false
 
-// you can also (recursively) delete a dir
-gofer.deleteDir('some/dir');
+    // you can delete a file
+    await gofer.delete('test.txt');
 
-// you can create an empty dir (or do nothing if it existed already)
-gofer.createDir('some/other/dir');
+    // you can also (recursively) delete a dir
+    await gofer.deleteDir('some/dir');
 
-// you can even copy and rename (move) files:
-gofer.copy('test.txt', 'test2.txt');
-gofer.rename('test.txt', 'test1.txt');
+    // you can create an empty dir (or do nothing if it existed already)
+    await gofer.createDir('some/other/dir');
 
-// it, of course, supports streams
-gofer.writeStream('test.txt', someReadableStream);
-const { stream } = gofer.readStream('test.txt');
+    // you can even copy and move (aka rename) files:
+    await gofer.copy('test.txt', 'test2.txt');
+    await gofer.move('test.txt', 'test1.txt');
+
+    // it, of course, supports streams
+    await gofer.writeStream('test.txt', someReadableStream);
+    const { stream } = await gofer.readStream('test.txt');
+    // returns a StreamFile, which is same as File, but has a `stream` property instead of `contents`
+    
+    // you can also set the visibility (does different things depending on adapters.
+    // the Local Adapter lets you set the permission mask (configurable in constructor))
+    await this.setVisibility('test.txt', Visibility.Private);
+    (await this.getVisibility('test.txt')) === Visibility.Private;
+})();
 ```
 
 The API always returns a promise (some adapters may be able to do certain things synchronously, but for consistency, it returns promises as some adapters have to do thing async).
