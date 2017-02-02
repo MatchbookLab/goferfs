@@ -19,7 +19,7 @@ export default class Gofer implements IFilesystem {
     }
 
     async write(path: string, contents: string, options?: { visibility?: Visibility }): Promise<Metadata> {
-        path = this.cleanPath(path);
+        path = Gofer.cleanPath(path);
 
         await this.ensureDirectory(path);
 
@@ -27,7 +27,7 @@ export default class Gofer implements IFilesystem {
     }
 
     async writeStream(path: string, stream: Stream, options?: { visibility?: Visibility }): Promise<Metadata> {
-        path = this.cleanPath(path);
+        path = Gofer.cleanPath(path);
 
         await this.ensureDirectory(path);
 
@@ -35,46 +35,46 @@ export default class Gofer implements IFilesystem {
     }
 
     exists(path: string): Promise<boolean> {
-        path = this.cleanPath(path);
+        path = Gofer.cleanPath(path);
         return this.adapter.exists(path);
     }
 
     read(path: string): Promise<File> {
-        path = this.cleanPath(path);
+        path = Gofer.cleanPath(path);
         return this.adapter.read(path);
     }
 
     readStream(path: string): Promise<StreamFile> {
-        path = this.cleanPath(path);
+        path = Gofer.cleanPath(path);
         return this.adapter.readStream(path);
     }
 
     getMetadata(path: string): Promise<Metadata> {
-        path = this.cleanPath(path);
+        path = Gofer.cleanPath(path);
         return this.adapter.getMetadata(path);
     }
 
     getVisibility(path: string): Promise<Visibility> {
-        path = this.cleanPath(path);
+        path = Gofer.cleanPath(path);
         return this.adapter.getVisibility(path);
     }
 
     move(oldPath: string, newPath: string): Promise<Metadata> {
-        oldPath = this.cleanPath(oldPath);
-        newPath = this.cleanPath(newPath);
+        oldPath = Gofer.cleanPath(oldPath);
+        newPath = Gofer.cleanPath(newPath);
 
         return this.adapter.move(oldPath, newPath);
     }
 
     copy(oldPath: string, clonedPath: string): Promise<Metadata> {
-        oldPath = this.cleanPath(oldPath);
-        clonedPath = this.cleanPath(clonedPath);
+        oldPath = Gofer.cleanPath(oldPath);
+        clonedPath = Gofer.cleanPath(clonedPath);
 
         return this.adapter.copy(oldPath, clonedPath);
     }
 
     async delete(path: string): Promise<boolean> {
-        path = this.cleanPath(path);
+        path = Gofer.cleanPath(path);
 
         if (!(await this.exists(path))) {
             // nothing was deleted as it doesn't exist
@@ -85,12 +85,12 @@ export default class Gofer implements IFilesystem {
     }
 
     deleteDir(path: string): Promise<boolean> {
-        path = this.cleanPath(path);
+        path = Gofer.cleanPath(path);
         return this.adapter.deleteDir(path);
     }
 
     async createDir(path: string): Promise<Metadata> {
-        path = this.cleanPath(path);
+        path = Gofer.cleanPath(path);
 
         if (!(await this.exists(path))) {
             return this.adapter.createDir(path);
@@ -101,17 +101,17 @@ export default class Gofer implements IFilesystem {
     }
 
     setVisibility(path: string, visibility: Visibility): Promise<Metadata> {
-        path = this.cleanPath(path);
+        path = Gofer.cleanPath(path);
         return this.adapter.setVisibility(path, visibility);
     }
 
     private ensureDirectory(path: string) {
-        path = this.cleanPath(path);
+        path = Gofer.cleanPath(path);
         const dir = dirname(path);
         return this.createDir(dir);
     }
 
-    private cleanPath(path: string): string {
+    static cleanPath(path: string): string {
         return path.replace(/^\.?\/+/, '');
     }
 

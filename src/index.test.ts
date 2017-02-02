@@ -42,3 +42,15 @@ test('version check should work with pre-release versions', (t) => {
     Gofer.versionCheck('1.0', '1.0.0-0.beta');
     t.true(t.context.warnStub.notCalled);
 });
+
+test('clean path cleans path', (t) => {
+    t.deepEqual(Gofer.cleanPath('path/to/file.txt'), 'path/to/file.txt');
+    t.deepEqual(Gofer.cleanPath('/path/to/file.txt'), 'path/to/file.txt');
+    t.deepEqual(Gofer.cleanPath('./path/to/file.txt'), 'path/to/file.txt');
+});
+
+test('clean path handles root', (t) => {
+    t.deepEqual(Gofer.cleanPath(''), '');
+    t.deepEqual(Gofer.cleanPath('/'), '');
+    t.deepEqual(Gofer.cleanPath('./'), '');
+});
