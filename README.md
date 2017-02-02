@@ -100,7 +100,7 @@ const gofer = new GoferManager({
 });
 
 gofer.write('s3://test.txt', 'Contents');
-gofer.rename('s3://test.txt', 'gcs://test.txt');
+gofer.move('s3://test.txt', 'gcs://test.txt');
 ```
 
 ### Lots of Adapters
