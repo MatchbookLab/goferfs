@@ -1,7 +1,9 @@
-import { Visibility, Metadata } from '.';
+import * as Stream from 'stream';
 
-export default class File {
-    contents: string;
+import { Visibility, Metadata } from '../index';
+
+export default class StreamFile {
+    stream: Stream;
     name: string;
     ext: string;
     path: string;
@@ -13,8 +15,8 @@ export default class File {
     timestamp: Date;
     mimetype: string;
 
-    constructor(metadata: Metadata, contents: string) {
-        this.contents = contents;
+    constructor(metadata: Metadata, stream: Stream) {
+        this.stream = stream;
 
         this.name = metadata.name;
         this.ext = metadata.ext;

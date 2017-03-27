@@ -1,4 +1,4 @@
-import { Visibility } from '.';
+import { Visibility } from '../index';
 
 export default class Metadata {
     name: string;

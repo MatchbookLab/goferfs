@@ -1,37 +1,39 @@
 import { dirname } from 'path';
 import * as Stream from 'stream';
 
-import { IFilesystem, IAdapter } from '../types/interfaces';
-import { Visibility, Metadata, File, StreamFile } from '../types';
+import { IFilesystem, IAdapter } from '../types';
+import { Visibility, Metadata, File, StreamFile, ReadOptions, WriteOptions } from '../types';
 
 const { version } = require('../package.json');
 
-export default class Gofer implements IFilesystem {
+export class Gofer<TAdapter> implements IFilesystem<TAdapter> {
     targetVersion: string;
+    adapterName: string;
 
-    private adapter: IAdapter;
+    private adapter: IAdapter<TAdapter>;
 
-    constructor (adapter: IAdapter) {
+    constructor(adapter: IAdapter<TAdapter>) {
         this.targetVersion = version;
         Gofer.versionCheck(adapter.targetVersion, this.targetVersion);
 
         this.adapter = adapter;
+        this.adapterName = this.adapter.adapterName;
     }
 
-    async write(path: string, contents: string, options?: { visibility?: Visibility }): Promise<Metadata> {
+    async write(path: string, contents: string | Buffer, { encoding = 'utf8', visibility = Visibility.Public }: WriteOptions = {}): Promise<Metadata> {
         path = Gofer.cleanPath(path);
 
         await this.ensureDirectory(path);
 
-        return this.adapter.write(path, contents, options);
+        return this.adapter.write(path, contents, { encoding, visibility });
     }
 
-    async writeStream(path: string, stream: Stream, options?: { visibility?: Visibility }): Promise<Metadata> {
+    async writeStream(path: string, stream: Stream, { encoding = 'utf8', visibility = Visibility.Public }: WriteOptions = {}): Promise<Metadata> {
         path = Gofer.cleanPath(path);
 
         await this.ensureDirectory(path);
 
-        return this.adapter.writeStream(path, stream, options);
+        return this.adapter.writeStream(path, stream, { encoding, visibility });
     }
 
     exists(path: string): Promise<boolean> {
@@ -39,14 +41,14 @@ export default class Gofer implements IFilesystem {
         return this.adapter.exists(path);
     }
 
-    read(path: string): Promise<File> {
+    read(path: string, { encoding = null }: ReadOptions = {}): Promise<File> {
         path = Gofer.cleanPath(path);
-        return this.adapter.read(path);
+        return this.adapter.read(path, { encoding });
     }
 
-    readStream(path: string): Promise<StreamFile> {
+    readStream(path: string, { encoding = null }: ReadOptions = {}): Promise<StreamFile> {
         path = Gofer.cleanPath(path);
-        return this.adapter.readStream(path);
+        return this.adapter.readStream(path, { encoding });
     }
 
     getMetadata(path: string): Promise<Metadata> {

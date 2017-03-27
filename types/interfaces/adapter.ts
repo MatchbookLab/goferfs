@@ -1,11 +1,13 @@
 import * as Stream from 'stream';
 
-import { Metadata, File, StreamFile, Visibility } from '..';
+import { Metadata, File, StreamFile, Visibility, ReadOptions, WriteOptions } from '..';
 
-declare interface IAdapter {
+interface IAdapter<TAdapter> {
     ////////////////
     // PROPERTIES //
     ////////////////
+
+    adapterName: string;
 
     targetVersion: string;
 
@@ -21,12 +23,12 @@ declare interface IAdapter {
     /**
      * Read a file.
      */
-    read(path: string): Promise<File>;
+    read(path: string, options: ReadOptions): Promise<File>;
 
     /**
      * Read a file as a stream.
      */
-    readStream(path: string): Promise<StreamFile>;
+    readStream(path: string, options: ReadOptions): Promise<StreamFile>;
 
     /**
      * Get all the meta data of a file or directory.
@@ -45,12 +47,12 @@ declare interface IAdapter {
     /**
      * Write a file.
      */
-    write(path: string, contents: string, options?: { visibility?: Visibility }): Promise<Metadata>;
+    write(path: string, contents: string | Buffer, options: WriteOptions): Promise<Metadata>;
 
     /**
      * Write a file using a stream.
      */
-    writeStream(path: string, stream: Stream, options?: { visibility?: Visibility }): Promise<Metadata>;
+    writeStream(path: string, stream: Stream, options: WriteOptions): Promise<Metadata>;
 
     /**
      * Rename a file.
