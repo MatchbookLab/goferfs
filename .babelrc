@@ -1,10 +1,16 @@
 {
-    "presets": [
-        ["env", {
-            "targets": {
-                "node": 4
-            }
-        }]
-    ],
-    "plugins": ["transform-runtime"]
+  "ignore": [
+    "**/*.test.ts"
+  ],
+  "presets": [
+    "@babel/preset-typescript",
+    [
+      "@babel/env",
+      {
+        "targets": {
+          "node": 10
+        }
+      }
+    ]
+  ]
 }
