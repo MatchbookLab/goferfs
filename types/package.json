@@ -2,24 +2,24 @@
   "name": "goferfs-types",
   "version": "1.0.0-8",
   "description": "Interfaces for Gofer",
-  "main": "index.js",
+  "main": "index.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
-    "url": "http://github.com/cohesivelabs/goferfs",
+    "url": "http://github.com/matchbooklab/goferfs",
     "type": "git"
   },
   "keywords": [
     "goferfs"
   ],
-  "author": "Cameron Spear <cam@cameronspear.com>",
+  "author": "Cameron Spear <cameron@matchbooklab.com>",
   "contributors": [
     "Justen Martin <jmart@the-coder.com>"
   ],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/cohesivelabs/goferfs/issues"
+    "url": "https://github.com/matchbooklab/goferfs/issues"
   },
-  "homepage": "https://github.com/cohesivelabs/goferfs#readme"
+  "homepage": "https://github.com/matchbooklab/goferfs#readme"
 }

@@ -1,6 +1,6 @@
 import * as Stream from 'stream';
 
-import { File, Metadata, ReadOptions, StreamFile, Visibility, WriteOptions } from '..';
+import { File, Metadata, ReadOptions, StreamFile, Visibility, WriteOptions } from '../index';
 
 export interface IAdapter<TAdapter> {
   ////////////////

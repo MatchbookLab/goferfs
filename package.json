@@ -2,42 +2,41 @@
   "name": "goferfs",
   "description": "Filesystem Abstraction Library",
   "version": "1.0.0-8",
-  "main": "src/index.js",
-  "types": "src/index.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.ts",
   "engines": {
     "node": ">=4.0"
   },
   "scripts": {
     "lint": "tslint src/**/*.ts",
-    "clean": "rimraf src/**/*.js types/**/*.js",
-    "build": "npm run clean && npm run lint && tsc && babel -d . src/**/*.js types/**/*.js",
+    "clean": "rimraf dist",
+    "prebuild": "npm run clean && npm run lint",
+    "build": "babel src --out-dir=dist --extensions='.ts' --source-maps",
     "test": "jest",
     "prepublish": "npm test"
   },
   "repository": {
-    "url": "http://github.com/cohesivelabs/goferfs",
+    "url": "http://github.com/matchbooklab/goferfs",
     "type": "git"
   },
-  "author": "Cameron Spear <cam@cameronspear.com>",
+  "author": "Cameron Spear <cameron@matchbooklab.com>",
   "contributors": [
     "Justen Martin <jmart@the-coder.com>"
   ],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/cohesivelabs/goferfs/issues"
+    "url": "https://github.com/matchbooklab/goferfs/issues"
   },
-  "homepage": "https://github.com/cohesivelabs/goferfs#readme",
-  "dependencies": {
-    "babel-runtime": "^6.26.0"
-  },
+  "homepage": "https://github.com/matchbooklab/goferfs#readme",
+  "dependencies": {},
   "devDependencies": {
+    "@babel/cli": "^7.7.4",
+    "@babel/core": "^7.7.4",
+    "@babel/preset-env": "^7.7.4",
+    "@babel/preset-typescript": "^7.7.4",
     "@types/jest": "^24.0.23",
     "@types/mime": "^2.0.1",
     "@types/node": "^12.12.14",
-    "babel-cli": "^6.26.0",
-    "babel-plugin-transform-runtime": "^6.23.0",
-    "babel-polyfill": "^6.26.0",
-    "babel-preset-env": "^1.7.0",
     "jest": "^24.9.0",
     "np": "^5.2.1",
     "rimraf": "^3.0.0",

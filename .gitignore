@@ -1,5 +1,4 @@
 .idea
-src/**/*.js
-types/**/*.js
+dist
 node_modules
 npm-debug.log*
