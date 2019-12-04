@@ -1,6 +1,4 @@
-enum Visibility {
-    Private,
-    Public,
+export enum Visibility {
+  Private,
+  Public,
 }
-
-export default Visibility;

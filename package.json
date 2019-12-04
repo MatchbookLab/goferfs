@@ -11,7 +11,7 @@
     "lint": "tslint src/**/*.ts",
     "clean": "rimraf src/**/*.js types/**/*.js",
     "build": "npm run clean && npm run lint && tsc && babel -d . src/**/*.js types/**/*.js",
-    "test": "npm run build && ava src/**/*.test.js",
+    "test": "jest",
     "prepublish": "npm test"
   },
   "repository": {
@@ -28,22 +28,22 @@
   },
   "homepage": "https://github.com/cohesivelabs/goferfs#readme",
   "dependencies": {
-    "babel-runtime": "^6.22.0"
+    "babel-runtime": "^6.26.0"
   },
   "devDependencies": {
-    "@types/mime": "^0.0.29",
-    "@types/node": "^7.0.11",
-    "@types/sinon": "^1.16.34",
-    "ava": "^0.17.0",
-    "babel-cli": "^6.22.2",
-    "babel-plugin-transform-runtime": "^6.22.0",
-    "babel-polyfill": "^6.22.0",
-    "babel-preset-env": "^1.1.8",
-    "np": "^2.12.0",
-    "rimraf": "^2.5.4",
-    "sinon": "^1.17.7",
-    "ts-node": "^2.0.0",
-    "tslint": "^4.4.2",
-    "typescript": "^2.1.5"
+    "@types/jest": "^24.0.23",
+    "@types/mime": "^2.0.1",
+    "@types/node": "^12.12.14",
+    "babel-cli": "^6.26.0",
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "babel-polyfill": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
+    "jest": "^24.9.0",
+    "np": "^5.2.1",
+    "rimraf": "^3.0.0",
+    "ts-jest": "^24.2.0",
+    "ts-node": "^8.5.4",
+    "tslint": "^5.20.1",
+    "typescript": "^3.7.3"
   }
 }
