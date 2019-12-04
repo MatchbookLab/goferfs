@@ -5,7 +5,7 @@ import { File, IAdapter, IFilesystem, Metadata, ReadOptions, StreamFile, Visibil
 
 const { version } = require('../package.json');
 
-export abstract class Gofer<TAdapter> implements IFilesystem<TAdapter> {
+export class Gofer<TAdapter> implements IFilesystem<TAdapter> {
   adapterName: string;
   targetVersion: string;
 

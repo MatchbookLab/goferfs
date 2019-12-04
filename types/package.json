@@ -2,7 +2,7 @@
   "name": "goferfs-types",
   "version": "1.0.0-8",
   "description": "Interfaces for Gofer",
-  "main": "index.ts",
+  "main": "index.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
