@@ -8,7 +8,9 @@
     "node": ">=4.0"
   },
   "scripts": {
-    "lint": "tslint src/**/*.ts",
+    "lint": "npm-run-all --parallel lint:*",
+    "lint:lint": "tslint src/**/*.ts",
+    "lint:types": "tsc --noEmit --skipLibCheck -p tsconfig.json",
     "clean": "rimraf dist",
     "prebuild": "npm run clean && npm run lint",
     "build": "babel src --out-dir=dist --extensions='.ts' --source-maps",
@@ -39,6 +41,7 @@
     "@types/node": "^12.12.14",
     "jest": "^24.9.0",
     "np": "^5.2.1",
+    "npm-run-all": "^4.1.5",
     "rimraf": "^3.0.0",
     "ts-jest": "^24.2.0",
     "ts-node": "^8.5.4",
