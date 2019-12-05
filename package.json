@@ -1,7 +1,7 @@
 {
   "name": "goferfs",
   "description": "Filesystem Abstraction Library",
-  "version": "1.0.0-10",
+  "version": "1.0.0-11",
   "main": "dist/index.js",
   "types": "dist/index.ts",
   "engines": {
