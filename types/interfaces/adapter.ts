@@ -1,4 +1,4 @@
-import * as Stream from 'stream';
+import { Readable } from 'stream';
 
 import { File, Metadata, ReadOptions, StreamFile, Visibility, WriteOptions } from '../index';
 
@@ -47,22 +47,22 @@ export interface IAdapter<TAdapter> {
   /**
    * Write a file.
    */
-  write(path: string, contents: string | Buffer, options: WriteOptions): Promise<Metadata>;
+  write(path: string, contents: string | Buffer, options?: WriteOptions): Promise<void>;
 
   /**
    * Write a file using a stream.
    */
-  writeStream(path: string, stream: Stream, options: WriteOptions): Promise<Metadata>;
+  writeStream(path: string, stream: Readable, options?: WriteOptions): Promise<void>;
 
   /**
    * Rename a file.
    */
-  move(oldPath: string, newPath: string): Promise<Metadata>;
+  move(oldPath: string, newPath: string): Promise<void>;
 
   /**
    * Copy a file.
    */
-  copy(oldPath: string, clonedPath: string): Promise<Metadata>;
+  copy(oldPath: string, clonedPath: string): Promise<void>;
 
   /**
    * Delete a file.
@@ -77,10 +77,10 @@ export interface IAdapter<TAdapter> {
   /**
    * Create a directory.
    */
-  createDir(path: string): Promise<Metadata>;
+  createDir(path: string): Promise<void>;
 
   /**
    * Set the visibility for a file.
    */
-  setVisibility(path: string, visibility: Visibility): Promise<Metadata>;
+  setVisibility(path: string, visibility: Visibility): Promise<void>;
 }

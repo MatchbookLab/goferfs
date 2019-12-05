@@ -1,5 +1,5 @@
 import { dirname } from 'path';
-import * as Stream from 'stream';
+import { Readable } from 'stream';
 
 import { File, IAdapter, IFilesystem, Metadata, ReadOptions, StreamFile, Visibility, WriteOptions } from '../types';
 
@@ -37,8 +37,8 @@ export class Gofer<TAdapter> implements IFilesystem<TAdapter> {
   async write(
     path: string,
     contents: string | Buffer,
-    { encoding = 'utf8', visibility = Visibility.Public }: WriteOptions = {},
-  ): Promise<Metadata> {
+    { encoding = 'utf8', visibility = Visibility.Public }: WriteOptions = { visibility: Visibility.Public, encoding: 'utf8' },
+  ): Promise<void> {
     path = Gofer.cleanPath(path);
 
     await this.ensureDirectory(path);
@@ -48,9 +48,9 @@ export class Gofer<TAdapter> implements IFilesystem<TAdapter> {
 
   async writeStream(
     path: string,
-    stream: Stream,
-    { encoding = 'utf8', visibility = Visibility.Public }: WriteOptions = {},
-  ): Promise<Metadata> {
+    stream: Readable,
+    { encoding = 'utf8', visibility = Visibility.Public }: WriteOptions = { visibility: Visibility.Public, encoding: 'utf8' },
+  ): Promise<void> {
     path = Gofer.cleanPath(path);
 
     await this.ensureDirectory(path);
@@ -58,14 +58,14 @@ export class Gofer<TAdapter> implements IFilesystem<TAdapter> {
     return this.adapter.writeStream(path, stream, { encoding, visibility });
   }
 
-  move(oldPath: string, newPath: string): Promise<Metadata> {
+  move(oldPath: string, newPath: string): Promise<void> {
     oldPath = Gofer.cleanPath(oldPath);
     newPath = Gofer.cleanPath(newPath);
 
     return this.adapter.move(oldPath, newPath);
   }
 
-  copy(oldPath: string, clonedPath: string): Promise<Metadata> {
+  copy(oldPath: string, clonedPath: string): Promise<void> {
     oldPath = Gofer.cleanPath(oldPath);
     clonedPath = Gofer.cleanPath(clonedPath);
 
@@ -88,7 +88,7 @@ export class Gofer<TAdapter> implements IFilesystem<TAdapter> {
     return this.adapter.deleteDir(path);
   }
 
-  async createDir(path: string): Promise<Metadata> {
+  async createDir(path: string): Promise<void> {
     path = Gofer.cleanPath(path);
 
     if (!(await this.exists(path))) {
@@ -99,7 +99,7 @@ export class Gofer<TAdapter> implements IFilesystem<TAdapter> {
     return null;
   }
 
-  setVisibility(path: string, visibility: Visibility): Promise<Metadata> {
+  setVisibility(path: string, visibility: Visibility): Promise<void> {
     path = Gofer.cleanPath(path);
     return this.adapter.setVisibility(path, visibility);
   }
